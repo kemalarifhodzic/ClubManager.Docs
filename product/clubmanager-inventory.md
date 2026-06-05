@@ -71,11 +71,11 @@ Inventory se ne potvrđuje iz sjećanja. Svaka stavka se potvrđuje kroz kod, ba
 | Finance       | Payments                         | Yes     | Partial | Yes     | Partial | In progress     | Backend source of truth                                      |
 | Finance       | Financial card                   | Partial | Partial | Yes     | No      | In progress     | Sintetički i analitički prikaz                               |
 | Finance       | Bulk invoices                    | Partial | Partial | Yes     | No      | In progress     | Period, amount, teams/players, dry-run                       |
-| Player Portal | Portal activation from Tenant FE | Yes     | Yes     | Yes     | Partial | Implemented     | Password flow polish potreban                                |
-| Player Portal | Player profile endpoint          | Yes     | Yes     | Yes     | Partial | Implemented     | `/api/player/me`                                             |
-| Player Portal | Player events                    | Yes     | Partial | Yes     | Partial | Implemented     | `/api/player/events`                                         |
-| Player Portal | Player attendance                | Yes     | Partial | Yes     | Partial | Implemented     | `/api/player/attendance`                                     |
-| Player Portal | Player finance                   | Yes     | Partial | Yes     | Partial | Implemented     | `/api/player/finance`                                        |
+| Player Portal | Portal activation from Tenant FE | Yes     | Yes     | Yes     | Yes     | Verified        | Portal lifecycle tested                                      |
+| Player Portal | Player profile endpoint          | Yes     | Yes     | Yes     | Yes     | Verified        | `/api/player/me` verified after player login                 |
+| Player Portal | Player events                    | Yes     | Yes     | Yes     | Yes     | Verified        | `/api/player/events` verified in Player FE                   |
+| Player Portal | Player attendance                | Yes     | Yes     | Yes     | Yes     | Verified        | `/api/player/attendance` verified in Player FE               |
+| Player Portal | Player finance                   | Yes     | Yes     | Yes     | Yes     | Verified        | `/api/player/finance` verified in Player FE                  |
 | Player FE     | Player app shell                 | N/A     | Partial | N/A     | Partial | In progress     | Mobile-first                                                 |
 | Player FE     | Events page                      | Yes     | Partial | Yes     | Partial | In progress     | Lista i detalj događaja                                      |
 | Player FE     | Attendance page                  | Yes     | Partial | Yes     | Partial | In progress     | Summary + historija                                          |
@@ -128,6 +128,40 @@ Polished
 Remaining:
 
 * komentarisani legacy photo blokovi mogu se kasnije očistiti ako budu smetali pretrazi
+
+### Player Portal — osnovni tok
+
+Status: `Verified`
+
+Potvrđeno:
+
+* korisnik kluba može aktivirati Player Portal za igrača
+* aktivacija kreira povezani korisnički račun ako on ne postoji
+* aktivacija reaktivira postojeći korisnički račun ako je portal ranije bio deaktiviran
+* deaktivacija postavlja korisnički račun kao neaktivan
+* deaktivacija ne briše korisnika
+* deaktivacija ne uklanja Player rolu
+* deaktivacija ne briše vezu `players.user_id`
+* promjena lozinke radi
+* igrač se može prijaviti na Player FE
+* Player FE dashboard se učitava nakon prijave
+* stranice Profil, Događaji, Prisustvo i Članarine su provjerene
+
+Backend ponašanje:
+
+* `players.user_id` povezuje igrača sa portal korisničkim računom
+* `users.email` je email za prijavu na Player Portal
+* `players.email` je kontakt email igrača u profilu
+* ova dva emaila su namjerno odvojena i ne moraju biti ista
+* reaktivacija koristi isti activate endpoint
+* reaktivacija postavlja `users.is_active = true`
+* reaktivacija može promijeniti portal login email i lozinku
+
+Otvorena API dorada:
+
+* kod reaktivacije, ako se mijenja portal login email, backend treba provjeriti da taj email već ne koristi drugi korisnik
+* nova aktivacija već provjerava jedinstvenost emaila
+* reaktivacija treba imati istu zaštitu, uz izuzetak trenutno povezanog korisnika
 
 ---
 

@@ -28,15 +28,18 @@ Za strateški pregled i širi portfolio koristiti OneNote.
 
 ## Done
 
-| Module        | Feature                 | Status             | Notes                                                                                                         |
-| ------------- | ----------------------- | ------------------ | ------------------------------------------------------------------------------------------------------------- |
-| Documentation | Central docs structure  | Done               | Kreiran centralni folder `/home/kemo/ClubManager/docs`                                                        |
-| Documentation | OneNote structure       | Done               | OneNote se koristi kao radna tabla / pregled                                                                  |
-| Players       | Player CRUD             | Needs Verification | Smatra se implementiranim, ali treba formalna provjera                                                        |
-| Staff         | Basic Staff module      | Needs Verification | CRUD i osnovne popravke postoje, treba potvrditi stanje                                                       |
-| Teams         | Basic Teams module      | Needs Verification | Osnovni modul postoji, treba potvrditi status                                                                 |
-| Documents     | Basic document handling | Needs Verification | Upload/download/replace/delete postoje, treba potvrditi kroz aplikaciju                                       |
-| Photos        | Photo/avatar pipeline   | Done               | Standardized PersonThumb/usePersonPhoto/mediaStore pipeline; legacy photo cache removed and manually verified |
+| Module        | Feature                            | Status             | Notes                                                                                                         |
+| ------------- | ---------------------------------- | ------------------ | ------------------------------------------------------------------------------------------------------------- |
+| Documentation | Central docs structure             | Done               | Kreiran centralni folder `/home/kemo/ClubManager/docs`                                                        |
+| Documentation | OneNote structure                  | Done               | OneNote se koristi kao radna tabla / pregled                                                                  |
+| Documentation | Central docs Git repo              | Done               | `/home/kemo/ClubManager/docs` je poseban Git repo i centralna dokumentacija projekta                          |
+| Players       | Player CRUD                        | Needs Verification | Smatra se implementiranim, ali treba formalna provjera                                                        |
+| Staff         | Basic Staff module                 | Needs Verification | CRUD i osnovne popravke postoje, treba potvrditi stanje                                                       |
+| Teams         | Basic Teams module                 | Needs Verification | Osnovni modul postoji, treba potvrditi status                                                                 |
+| Documents     | Basic document handling            | Needs Verification | Upload/download/replace/delete postoje, treba potvrditi kroz aplikaciju                                       |
+| Photos        | Photo/avatar pipeline              | Done               | Standardized PersonThumb/usePersonPhoto/mediaStore pipeline; legacy photo cache removed and manually verified |
+| Player Portal | Aktivacija, deaktivacija i lozinka | Done               | Aktivacija, deaktivacija, reaktivacija i promjena lozinke su testirane                                        |
+| Player Portal | Player FE osnovne stranice         | Done               | Profil, događaji, prisustvo i članarine su provjereni nakon player login-a                                    |
 
 ---
 
@@ -44,43 +47,40 @@ Za strateški pregled i širi portfolio koristiti OneNote.
 
 ## In Progress
 
-| Module        | Feature                           | Status      | Notes                                                                    |
-| ------------- | --------------------------------- | ----------- | ------------------------------------------------------------------------ |
-| Player Portal | Activation from Tenant FE         | In Progress | Zadnje aktivno rađeno; password flow i status UI treba završno ispeglati |
-| Player FE     | Player portal pages               | In Progress | Events, attendance i finance postoje djelimično; mobile polish potreban  |
-| Finance       | Charges, payments, financial card | In Progress | Visok prioritet prije većeg DevOps razdvajanja                           |
-| Attendance    | Lock/unlock and statistics rules  | In Progress | Lock poslije kraja eventa; statistika samo iz locked attendance          |
-| Events        | Event lifecycle rules             | In Progress | Edit/delete pravila zavise od lineup/attendance stanja                   |
-| Lineup        | MatchList/Lineup UI               | In Progress | Header treba uskladiti sa Attendance panelom                             |
+| Module     | Feature                           | Status      | Notes                                                           |
+| ---------- | --------------------------------- | ----------- | --------------------------------------------------------------- |
+| Finance    | Charges, payments, financial card | In Progress | Visok prioritet prije većeg DevOps razdvajanja                  |
+| Attendance | Lock/unlock and statistics rules  | In Progress | Lock poslije kraja eventa; statistika samo iz locked attendance |
+| Events     | Event lifecycle rules             | In Progress | Edit/delete pravila zavise od lineup/attendance stanja          |
+| Lineup     | MatchList/Lineup UI               | In Progress | Header treba uskladiti sa Attendance panelom                    |
+| Player FE  | UI/mobile polish                  | In Progress | Core stranice su verificirane; ostaje vizuelni i UX polish      |
 
 ---
 
 ## Next
 
-| Priority | Module        | Feature                                     | Notes                                                                        |
-| -------- | ------------- | ------------------------------------------- | ---------------------------------------------------------------------------- |
-| 1        | Photos        | Verify Photo/avatar pipeline                | Provjeriti da je standardizovan pristup i da su nepotrebni hookovi uklonjeni |
-| 2        | Player Portal | Finish password/login flow                  | Aktivacija → login na Player FE mora biti potvrđena                          |
-| 3        | Finance       | Continue finance finalization               | BE + FE + testiranje                                                         |
-| 4        | Attendance    | Apply lock/read-only rules                  | Zaključan attendance ne smije dozvoliti izmjene                              |
-| 5        | Events        | Verify lifecycle rules                      | Posebno direct URL i zabrane edit/delete                                     |
-| 6        | Documentation | Update inventory after each verified module | Svaku potvrdu unijeti u inventory tabelu                                     |
+| Priority | Module        | Feature                                     | Notes                                                                 |
+| -------- | ------------- | ------------------------------------------- | --------------------------------------------------------------------- |
+| 1        | Finance       | Continue finance finalization               | BE + FE + testiranje                                                  |
+| 2        | Player Portal | Reactivation email uniqueness check         | Backend treba spriječiti dupli `users.email` kod reaktivacije portala |
+| 3        | Player Portal | Clarify contact vs portal email labels      | UI treba jasno razlikovati kontakt email i email za prijavu           |
+| 4        | Attendance    | Apply lock/read-only rules                  | Zaključan attendance ne smije dozvoliti izmjene                       |
+| 5        | Events        | Verify lifecycle rules                      | Posebno direct URL i zabrane edit/delete                              |
+| 6        | Documentation | Update inventory after each verified module | Svaku potvrdu unijeti u inventory tabelu                              |
 
 ---
 
 ## Needs Verification
 
-| Module        | Feature                   | What to verify                                                           |
-| ------------- | ------------------------- | ------------------------------------------------------------------------ |
-| Players       | Player CRUD               | Create/edit/delete/detail, JMBG validation, auto birth date              |
-| Staff         | Staff module              | CRUD, country select, date input, team staff assignment                  |
-| Teams         | Team module               | CRUD, team members, staff assignment, tenant scope                       |
-| Documents     | Documents module          | Upload, download, replace, deactivate, delete, purge                     |
-| Player Portal | Activation                | User creation, Player role, password, `player.userId`, login             |
-| Player FE     | Events/Attendance/Finance | API integration, mobile layout, role gate                                |
-| Attendance    | Lock rules                | Lock only after event end, locked read-only                              |
-| Events        | Lifecycle rules           | Edit/delete behavior with lineup, draft attendance and locked attendance |
-| Finance       | Finance module            | Charges, payments, status calculation, financial card                    |
+| Module    | Feature          | What to verify                                                           |
+| --------- | ---------------- | ------------------------------------------------------------------------ |
+| Players   | Player CRUD      | Create/edit/delete/detail, JMBG validation, auto birth date              |
+| Staff     | Staff module     | CRUD, country select, date input, team staff assignment                  |
+| Teams     | Team module      | CRUD, team members, staff assignment, tenant scope                       |
+| Documents | Documents module | Upload, download, replace, deactivate, delete, purge                     |
+| Attendance| Lock rules       | Lock only after event end, locked read-only                              |
+| Events    | Lifecycle rules  | Edit/delete behavior with lineup, draft attendance and locked attendance |
+| Finance   | Finance module   | Charges, payments, status calculation, financial card                    |
 
 ---
 

@@ -37,6 +37,32 @@ Ako je nešto samo ideja ili radna bilješka, prvo ide u OneNote.
 
 Ako je nešto potvrđeno kroz kod, bazu, Swagger, aplikaciju ili dogovorenu odluku, upisuje se u ovaj `docs` folder.
 
+## Git repository
+
+This docs folder is maintained as a separate Git repository.
+
+Location:
+
+```text
+/home/kemo/ClubManager/docs
+```
+
+## Novi standard od sada
+
+Kad završimo kod:
+
+```bash
+cd ~/ClubManager/tenant-fe
+git add .
+git commit -m "..."
+git push
+```
+
+cd ~/ClubManager/docs
+git add .
+git commit -m "docs: ..."
+git push
+
 ## Struktura
 
 ```text
