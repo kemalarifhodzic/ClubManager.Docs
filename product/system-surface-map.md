@@ -777,3 +777,656 @@ Prvo kompletna mapa sistema.
 Zatim verifikacija modula.
 Tek onda korekcije i polish.
 ```
+
+---
+
+# 13. Admin FE Surface
+
+Ova sekcija mapira stvarnu površinu `admin-fe` aplikacije.
+
+Izvor:
+
+```text
+Codex audit admin-fe workspace
+```
+
+Status audita:
+
+```text
+No files modified
+```
+
+---
+
+## 13.1 Admin FE routes
+
+| Route            | Screen / Behavior    |
+| ---------------- | -------------------- |
+| `/login`         | `LoginPage`          |
+| `/`              | redirect to `/clubs` |
+| `/dashboard`     | placeholder          |
+| `/clubs`         | `ClubsPage`          |
+| `/clubs/:id`     | `ClubDetailsPage`    |
+| `/users`         | placeholder          |
+| `/roles`         | placeholder          |
+| `/audit`         | placeholder          |
+| `/settings`      | placeholder          |
+| `/subscriptions` | `SubscriptionsPage`  |
+| `/plans`         | `PlansPage`          |
+| `/invoices`      | `InvoicesPage`       |
+| `/payments`      | placeholder          |
+| `/seasons`       | placeholder          |
+| `*`              | redirect to `/`      |
+
+---
+
+## 13.2 Admin FE active pages
+
+| Page                    | Status |
+| ----------------------- | ------ |
+| `LoginPage.tsx`         | active |
+| `ClubsPage.tsx`         | active |
+| `ClubDetailsPage.tsx`   | active |
+| `PlansPage.tsx`         | active |
+| `SubscriptionsPage.tsx` | active |
+| `InvoicesPage.tsx`      | active |
+
+---
+
+## 13.3 Admin FE placeholder pages
+
+Ove rute postoje, ali vode na placeholder ekrane:
+
+| Area      | Status      |
+| --------- | ----------- |
+| Dashboard | placeholder |
+| Users     | placeholder |
+| Roles     | placeholder |
+| Audit     | placeholder |
+| Settings  | placeholder |
+| Payments  | placeholder |
+| Seasons   | placeholder |
+
+Zaključak:
+
+Admin FE navigacija je šira od stvarno implementirane admin površine.
+
+---
+
+## 13.4 Admin FE navigation
+
+Sidebar sekcije:
+
+### Platform
+
+| Label     | Route        |
+| --------- | ------------ |
+| Dashboard | `/dashboard` |
+| Clubs     | `/clubs`     |
+| Users     | `/users`     |
+| Roles     | `/roles`     |
+| Audit     | `/audit`     |
+| Settings  | `/settings`  |
+
+### Billing
+
+| Label         | Route            |
+| ------------- | ---------------- |
+| Plans         | `/plans`         |
+| Subscriptions | `/subscriptions` |
+| Invoices      | `/invoices`      |
+| Payments      | `/payments`      |
+
+### System
+
+| Label   | Route      |
+| ------- | ---------- |
+| Seasons | `/seasons` |
+
+Sidebar takođe ima logout i mobile user chip.
+
+---
+
+## 13.5 Admin FE feature modules
+
+Feature folderi pod `admin-fe/src/features`:
+
+| Feature folder  | Purpose                                                                    |
+| --------------- | -------------------------------------------------------------------------- |
+| `clubs`         | club form, club summary, club users, feature toggles, bootstrap club owner |
+| `common`        | shared photo upload                                                        |
+| `invoices`      | create invoice, invoice payments modal                                     |
+| `subscriptions` | create subscription, change plan, cancel subscription                      |
+| `users`         | set password modal                                                         |
+
+---
+
+## 13.6 Admin FE shared components
+
+| Component / Area        | Purpose                               |
+| ----------------------- | ------------------------------------- |
+| `AdminLayout`           | main admin shell                      |
+| `AdminSidebar`          | admin navigation                      |
+| `AdminTopbar`           | admin topbar                          |
+| `StatusPill`            | shared status display                 |
+| `CountrySelect`         | country select                        |
+| `PhotoUploadModal`      | logo/photo upload                     |
+| `useClubLogo`           | club logo display                     |
+| `usePhotoProfileConfig` | photo config                          |
+| `AuthContext`           | auth state                            |
+| `ProtectedRoute`        | admin route protection                |
+| `src/api/index.ts`      | API client                            |
+| `src/lib/axios.ts`      | possible duplicate API client pattern |
+
+---
+
+## 13.7 Admin FE API usage
+
+### Auth
+
+| Method | Endpoint      |
+| ------ | ------------- |
+| POST   | `/auth/login` |
+
+### Clubs
+
+| Method | Endpoint                      |
+| ------ | ----------------------------- |
+| GET    | `/admin/clubs`                |
+| POST   | `/admin/clubs`                |
+| GET    | `/admin/clubs/:id`            |
+| PUT    | `/admin/clubs/:id`            |
+| POST   | `/admin/clubs/:id/activate`   |
+| POST   | `/admin/clubs/:id/deactivate` |
+
+### Club logo
+
+| Method | Endpoint                           |
+| ------ | ---------------------------------- |
+| GET    | `/admin/clubs/:id/logo?size=thumb` |
+| POST   | `/admin/clubs/:id/logo`            |
+| DELETE | `/admin/clubs/:id/logo`            |
+
+### Club users
+
+| Method | Endpoint                     |
+| ------ | ---------------------------- |
+| GET    | `/admin/clubs/:clubId/users` |
+| POST   | `/admin/clubs/:clubId/users` |
+
+### Admin users
+
+| Method | Endpoint                            |
+| ------ | ----------------------------------- |
+| POST   | `/admin/users/:userId/set-password` |
+
+### Feature toggles
+
+| Method | Endpoint                                    |
+| ------ | ------------------------------------------- |
+| GET    | `/admin/clubs/:clubId/features`             |
+| PUT    | `/admin/clubs/:clubId/features/:featureKey` |
+
+### Plans
+
+| Method | Endpoint                      |
+| ------ | ----------------------------- |
+| GET    | `/admin/plans`                |
+| POST   | `/admin/plans`                |
+| GET    | `/admin/plans/:id`            |
+| PUT    | `/admin/plans/:id`            |
+| POST   | `/admin/plans/:id/activate`   |
+| POST   | `/admin/plans/:id/deactivate` |
+
+### Subscriptions
+
+| Method | Endpoint                                       |
+| ------ | ---------------------------------------------- |
+| GET    | `/admin/subscriptions`                         |
+| POST   | `/admin/subscriptions/by-club/:clubId`         |
+| GET    | `/admin/subscriptions/by-club/:clubId/current` |
+| POST   | `/admin/subscriptions/:id/change-plan`         |
+| POST   | `/admin/subscriptions/:id/cancel`              |
+
+### Invoices
+
+| Method | Endpoint                          |
+| ------ | --------------------------------- |
+| GET    | `/admin/invoices`                 |
+| POST   | `/admin/invoices/by-club/:clubId` |
+| POST   | `/admin/invoices/:id/mark-paid`   |
+| POST   | `/admin/invoices/:id/void`        |
+
+### Invoice payments
+
+| Method | Endpoint                                         |
+| ------ | ------------------------------------------------ |
+| GET    | `/admin/invoices/:invoiceId/payments`            |
+| GET    | `/admin/invoices/:invoiceId/payments/:id`        |
+| POST   | `/admin/invoices/:invoiceId/payments`            |
+| PUT    | `/admin/invoices/:invoiceId/payments/:paymentId` |
+| DELETE | `/admin/invoices/:invoiceId/payments/:paymentId` |
+
+### Config
+
+| Method | Endpoint        |
+| ------ | --------------- |
+| GET    | `/config/photo` |
+
+---
+
+## 13.8 Admin API areas actually used
+
+| Admin API area  | Admin FE usage                                      |
+| --------------- | --------------------------------------------------- |
+| Clubs           | yes                                                 |
+| Club users      | yes                                                 |
+| Users           | partial, only set password modal                    |
+| Roles           | no implemented API usage; placeholder route only    |
+| Feature toggles | yes                                                 |
+| Settings        | no admin settings API usage; placeholder route only |
+| Audit           | no; placeholder route only                          |
+| Plans           | yes                                                 |
+| Subscriptions   | yes                                                 |
+| Invoices        | yes                                                 |
+| Payments        | yes, but only nested invoice payments               |
+| Ops/finalize    | no usage found                                      |
+| Seasons         | no usage found; placeholder route only              |
+
+---
+
+## 13.9 Admin FE role / permission usage
+
+Admin FE uses a role gate:
+
+```text
+Authenticated user must have role = admin
+```
+
+Observed behavior:
+
+- `ProtectedRoute` checks authentication.
+- Admin role check is based on `me.roles[0].toLowerCase() === "admin"`.
+- `AuthContext` parses JWT roles and caps.
+- `can(cap)` exists.
+- No active page/nav capability checks were found beyond the admin role gate.
+
+Current conclusion:
+
+```text
+Admin FE access control is role-based at shell level.
+Granular admin capabilities are not clearly used in active pages.
+```
+
+---
+
+## 13.10 Admin FE hidden / unexposed features
+
+| Feature                      | Note                                                             |
+| ---------------------------- | ---------------------------------------------------------------- |
+| ClubDetails subscription tab | local placeholder-style section                                  |
+| ClubDetails invoices tab     | local placeholder-style section                                  |
+| `UserSetPasswordModal`       | reachable through club users, while `/users` page is placeholder |
+| `PaymentsModal`              | active inside invoices, while `/payments` route is placeholder   |
+| `AdminContext.tsx`           | appears unused                                                   |
+| `CreateClubModal.tsx`        | likely duplicate/legacy beside active `ClubFormModal`            |
+| `index copy.css`             | leftover/demo artifact                                           |
+| `assets/react.svg`           | leftover/demo artifact                                           |
+| `src/lib/axios.ts`           | possible duplicate API client pattern beside `src/api/index.ts`  |
+
+---
+
+## 13.11 Admin FE duplicate / legacy findings
+
+| Area           | Finding                                                                                      |
+| -------------- | -------------------------------------------------------------------------------------------- |
+| Clubs          | two create implementations likely exist: active `ClubFormModal` and legacy `CreateClubModal` |
+| API client     | two client patterns: `src/api/index.ts` and `src/lib/axios.ts`                               |
+| Styles         | admin has copied tenant/domain styles, including player/team/fee selectors                   |
+| Logo/photo     | admin has its own `utils/photoCache.ts`, actively used by `PhotoUploadModal`                 |
+| Demo artifacts | `index copy.css` and `assets/react.svg` look like leftovers                                  |
+
+Napomena:
+
+Admin logo/photo cache ne treba dirati dok se posebno ne provjeri admin logo pipeline.
+
+---
+
+## 13.12 Admin FE inventory impact
+
+Admin FE status nije jednako širok kao Admin API status.
+
+### Implemented admin surfaces
+
+| Module                       | Status      |
+| ---------------------------- | ----------- |
+| Admin auth / admin role gate | Implemented |
+| Club management              | Implemented |
+| Club details                 | Implemented |
+| Club logo management         | Implemented |
+| Club users                   | Implemented |
+| Club feature toggles         | Implemented |
+| Plans                        | Implemented |
+| Subscriptions                | Implemented |
+| Invoices                     | Implemented |
+| Invoice payments             | Implemented |
+
+### Placeholder / planned admin surfaces
+
+| Module                   | Status      |
+| ------------------------ | ----------- |
+| Admin dashboard          | Placeholder |
+| Admin users page         | Placeholder |
+| Roles page               | Placeholder |
+| Audit page               | Placeholder |
+| Settings page            | Placeholder |
+| Standalone payments page | Placeholder |
+| Seasons page             | Placeholder |
+
+Current conclusion:
+
+```text
+Admin FE = implemented with gaps.
+Core clubs and billing surfaces exist.
+Several navigation items are placeholders.
+```
+
+---
+
+# 14. Player FE Surface
+
+Ova sekcija mapira stvarnu površinu `player-fe` aplikacije.
+
+Izvor:
+
+```text
+Codex audit player-fe workspace
+```
+
+Status audita:
+
+```text
+No files modified
+```
+
+---
+
+## 14.1 Player FE routes
+
+| Route            | Screen / Behavior                                                       |
+| ---------------- | ----------------------------------------------------------------------- |
+| `/login`         | `Login`                                                                 |
+| protected shell  | `ProtectedRoute` -> `PlayerAuthGuard` -> `PlayerBoot` -> `PlayerLayout` |
+| `/`              | redirect to `/dashboard`                                                |
+| `/dashboard`     | `DashboardPage`                                                         |
+| `/events`        | `EventsPage`                                                            |
+| `/events/:id`    | `EventDetailPage`                                                       |
+| `/attendance`    | `AttendancePage`                                                        |
+| `/finance`       | `FinancePage`                                                           |
+| `/notifications` | `NotificationsPage`                                                     |
+| `/profile`       | `ProfilePage`                                                           |
+| protected `*`    | inline 404                                                              |
+| outer `*`        | redirect to `/dashboard`                                                |
+
+---
+
+## 14.2 Player FE active pages
+
+| Page                    | Status                |
+| ----------------------- | --------------------- |
+| `Login.tsx`             | active                |
+| `DashboardPage.tsx`     | active                |
+| `EventsPage.tsx`        | active                |
+| `EventDetailPage.tsx`   | active                |
+| `AttendancePage.tsx`    | active                |
+| `FinancePage.tsx`       | active                |
+| `NotificationsPage.tsx` | active, but mock data |
+| `ProfilePage.tsx`       | active                |
+
+---
+
+## 14.3 Player FE navigation
+
+Sidebar items:
+
+| Label      | Route            |
+| ---------- | ---------------- |
+| Početna    | `/`              |
+| Događaji   | `/events`        |
+| Prisustvo  | `/attendance`    |
+| Članarine  | `/finance`       |
+| Obavijesti | `/notifications` |
+| Profil     | `/profile`       |
+| Logout     | action           |
+
+Topbar:
+
+- logout
+- club logo
+- user chip
+- Obavijesti button
+
+Napomena:
+
+Topbar `Obavijesti` button does not navigate.
+
+---
+
+## 14.4 Player FE feature organization
+
+`player-fe` nema `src/features` folder.
+
+Feature kod je organizovan uglavnom kroz:
+
+- routed pages
+- shared components
+- hooks
+- player context/bootstrap
+
+Major functional areas:
+
+| Area                         | Status          |
+| ---------------------------- | --------------- |
+| Player dashboard             | implemented     |
+| Events list/detail           | implemented     |
+| Attendance overview          | implemented     |
+| Finance/member fees overview | implemented     |
+| Notifications page           | mock/incomplete |
+| Profile page                 | implemented     |
+| Player context/bootstrap     | implemented     |
+| Club logo display            | implemented     |
+| Player profile photo display | implemented     |
+
+---
+
+## 14.5 Player FE API usage
+
+Default API base:
+
+```text
+VITE_API_BASE_URL || "/api"
+```
+
+Therefore paths like `/player/me` resolve as:
+
+```text
+/api/player/me
+```
+
+### Actually used endpoints
+
+| Area                 | Endpoint                                         |
+| -------------------- | ------------------------------------------------ |
+| Auth                 | `POST /api/auth/login`                           |
+| Player bootstrap     | `GET /api/player/me`                             |
+| Club logo            | `GET /api/player/me/club-logo?size=thumb`        |
+| Player profile photo | `GET /api/player/profile/photo?size=thumb`       |
+| Player profile photo | `GET /api/player/profile/photo?size=full`        |
+| Events               | `GET /api/player/events`                         |
+| Event detail         | `GET /api/player/events/:id`                     |
+| Attendance           | `GET /api/player/attendance?membershipScope=all` |
+| Finance              | `GET /api/player/finance`                        |
+
+### Requested API area status
+
+| API area                    | Used in Player FE        |
+| --------------------------- | ------------------------ |
+| `/api/player/me`            | yes                      |
+| `/api/player/me/club-logo`  | yes                      |
+| `/api/player/profile`       | no active API call found |
+| `/api/player/profile/photo` | yes                      |
+| `/api/player/events`        | yes                      |
+| `/api/player/events/{id}`   | yes                      |
+| `/api/player/attendance`    | yes                      |
+| `/api/player/finance`       | yes                      |
+
+---
+
+## 14.6 Player FE role / access guards
+
+Access flow:
+
+```text
+ProtectedRoute
+PlayerAuthGuard
+PlayerBoot
+PlayerLayout
+```
+
+Observed behavior:
+
+- `ProtectedRoute` requires authentication.
+- `ProtectedRoute` checks first role lowercased equals `player`.
+- `PlayerAuthGuard` also requires authentication.
+- `PlayerAuthGuard` checks `me.roles.includes("player")`.
+- `PlayerBoot` hydrates `PlayerContext` through `/player/me`.
+- `RequireCap` and `CapKeys` exist, but routed player pages do not appear to use capability checks.
+
+Risk:
+
+```text
+Role checks are duplicated and not fully consistent.
+ProtectedRoute is case-insensitive for first role.
+PlayerAuthGuard is case-sensitive and checks all roles.
+```
+
+---
+
+## 14.7 Player FE hidden / unexposed findings
+
+| Finding                 | Note                                                                                 |
+| ----------------------- | ------------------------------------------------------------------------------------ |
+| Notifications page      | routed and in navigation, but uses mock data                                         |
+| Password reset link     | login links to `/password-reset`, but no `/password-reset` route exists              |
+| Profile photo rendering | uses `usePersonPhoto` directly with manual `<img>`, not `PersonThumb`                |
+| `api.endpoints.ts`      | broad tenant/admin endpoint catalog exists but appears unused by active player pages |
+| generated contracts     | include many tenant/admin DTOs not specific to player portal                         |
+
+---
+
+## 14.8 Player FE duplicate / legacy findings
+
+| Area        | Finding                                                                                                             |
+| ----------- | ------------------------------------------------------------------------------------------------------------------- |
+| Events      | `components/EventsPage.tsx` duplicates routed `pages/EventsPage.tsx`                                                |
+| Sidebar     | `hooks/PlayerSidebar.tsx` duplicates `components/PlayerSidebar.tsx`                                                 |
+| PersonThumb | `components/PersonThumb copy.tsx` exists                                                                            |
+| Photo cache | `api/fetchSecurePhoto.ts` imports old `utils/photoCache.ts`, but active display uses `usePersonPhoto -> mediaStore` |
+| Styles      | legacy styles exist under `src/styles/legacy`                                                                       |
+| CSS         | copied CSS names suggest carried-over tenant styling                                                                |
+
+---
+
+## 14.9 Player FE inventory impact
+
+### Implemented / verified core surfaces
+
+| Module                   | Status                                                                     |
+| ------------------------ | -------------------------------------------------------------------------- |
+| Player authentication    | Implemented                                                                |
+| Player-only access guard | Implemented / needs cleanup                                                |
+| Player dashboard         | Verified through manual test                                               |
+| Player profile           | Verified / implemented                                                     |
+| Player events list       | Verified                                                                   |
+| Player event detail      | Implemented, needs final manual detail verification if not already clicked |
+| Player attendance        | Verified                                                                   |
+| Player finance           | Verified                                                                   |
+| Club logo                | Implemented                                                                |
+| Player profile photo     | Implemented                                                                |
+
+### Incomplete / cleanup surfaces
+
+| Module                          | Status                                                |
+| ------------------------------- | ----------------------------------------------------- |
+| Notifications                   | Mock / Planned                                        |
+| Password reset route            | Needs cleanup                                         |
+| Role guard consistency          | Needs cleanup                                         |
+| Player photo rendering standard | Needs cleanup / verify against `PersonThumb` standard |
+| Duplicate/legacy files          | Needs cleanup                                         |
+| Unused endpoint catalog         | Needs cleanup                                         |
+
+Current conclusion:
+
+```text
+Player FE = implemented with cleanup needed.
+Core portal pages and API integrations exist.
+Notifications are mock.
+Password reset link is broken/unrouted.
+Role guards are duplicated.
+Several legacy/duplicate files remain.
+```
+
+---
+
+# 15. Updated Inventory Impact After Admin FE and Player FE Audits
+
+Na osnovu Admin FE i Player FE audita, inventory treba precizirati u sljedećem krugu.
+
+## 15.1 Admin inventory corrections
+
+| Area             | Correction                                                     |
+| ---------------- | -------------------------------------------------------------- |
+| Admin Platform   | ne označavati cijeli Admin FE kao potpuno implementiran        |
+| Admin Dashboard  | placeholder                                                    |
+| Admin Users      | API exists, full FE page placeholder                           |
+| Roles            | API exists, FE page placeholder                                |
+| Audit            | API exists, FE page placeholder                                |
+| Settings         | API exists, FE page placeholder                                |
+| Seasons          | API exists, FE page placeholder                                |
+| Platform Billing | plans/subscriptions/invoices/payments are active core surfaces |
+| Payments         | invoice payments active; standalone payments route placeholder |
+
+## 15.2 Player inventory corrections
+
+| Area                  | Correction                                                 |
+| --------------------- | ---------------------------------------------------------- |
+| Player Portal CORE    | remains `Verified`                                         |
+| Player Events         | list verified; detail page exists                          |
+| Player Attendance     | verified                                                   |
+| Player Finance        | verified                                                   |
+| Player Notifications  | mock/planned                                               |
+| Player Password Reset | link exists, route missing                                 |
+| Player Access Guard   | implemented but needs cleanup                              |
+| Player Profile Photo  | implemented, but uses manual `<img>` with `usePersonPhoto` |
+| Player FE Cleanup     | duplicate/legacy files should be tracked                   |
+
+---
+
+# 16. Current System Surface Coverage
+
+| Surface                          | Status           |
+| -------------------------------- | ---------------- |
+| API Surface                      | mapped           |
+| Tenant FE Surface                | mapped           |
+| Admin FE Surface                 | mapped           |
+| Player FE Surface                | mapped           |
+| Database Surface                 | not mapped       |
+| Permissions/Capabilities Surface | partially mapped |
+| Manual verification              | partial          |
+
+Current conclusion:
+
+```text
+System Surface Map v1 is complete enough to drive Inventory v2.1.
+It is not final until database and permissions/capabilities are fully mapped.
+```
