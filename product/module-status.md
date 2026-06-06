@@ -59,28 +59,30 @@ Za strateški pregled i širi portfolio koristiti OneNote.
 
 ## Next
 
-| Priority | Module        | Feature                                     | Notes                                                                 |
-| -------- | ------------- | ------------------------------------------- | --------------------------------------------------------------------- |
-| 1        | Finance       | Continue finance finalization               | BE + FE + testiranje                                                  |
-| 2        | Player Portal | Reactivation email uniqueness check         | Backend treba spriječiti dupli `users.email` kod reaktivacije portala |
-| 3        | Player Portal | Clarify contact vs portal email labels      | UI treba jasno razlikovati kontakt email i email za prijavu           |
-| 4        | Attendance    | Apply lock/read-only rules                  | Zaključan attendance ne smije dozvoliti izmjene                       |
-| 5        | Events        | Verify lifecycle rules                      | Posebno direct URL i zabrane edit/delete                              |
-| 6        | Documentation | Update inventory after each verified module | Svaku potvrdu unijeti u inventory tabelu                              |
+| Priority | Module        | Feature                                     | Notes                                                                                 |
+| -------- | ------------- | ------------------------------------------- | ------------------------------------------------------------------------------------- |
+| 1        | Finance       | Continue finance finalization               | BE + FE + testiranje                                                                  |
+| 2        | Player Portal | Reactivation email uniqueness check         | Backend treba spriječiti dupli `users.email` kod reaktivacije portala                 |
+| 3        | Player Portal | Clarify contact vs portal email labels      | UI treba jasno razlikovati kontakt email i email za prijavu                           |
+| 4        | Attendance    | Apply lock/read-only rules                  | Zaključan attendance ne smije dozvoliti izmjene                                       |
+| 5        | Events        | Verify lifecycle rules                      | Posebno direct URL i zabrane edit/delete                                              |
+| 6        | Documentation | Update inventory after each verified module | Svaku potvrdu unijeti u inventory tabelu                                              |
+| 7        | Players       | Unify create flow and JMBG auto-fill        | Primary PlayerForm should get the same JMBG auto-fill behavior as legacy modal create |
 
 ---
 
 ## Needs Verification
 
-| Module    | Feature          | What to verify                                                           |
-| --------- | ---------------- | ------------------------------------------------------------------------ |
-| Players   | Player CRUD      | Create/edit/delete/detail, JMBG validation, auto birth date              |
-| Staff     | Staff module     | CRUD, country select, date input, team staff assignment                  |
-| Teams     | Team module      | CRUD, team members, staff assignment, tenant scope                       |
-| Documents | Documents module | Upload, download, replace, deactivate, delete, purge                     |
-| Attendance| Lock rules       | Lock only after event end, locked read-only                              |
-| Events    | Lifecycle rules  | Edit/delete behavior with lineup, draft attendance and locked attendance |
-| Finance   | Finance module   | Charges, payments, status calculation, financial card                    |
+| Module     | Feature                        | What to verify                                                                                                |
+| ---------- | ------------------------------ | ------------------------------------------------------------------------------------------------------------- |
+| Players    | Backend/API verification       | Verify backend endpoints, DB model, permissions and delete behavior                                           |
+| Players    | Birth date auto-fill from JMBG | Primary `PlayerForm` create/edit flow should be checked; auto-fill currently appears only in older modal flow |
+| Staff      | Staff module                   | CRUD, country select, date input, team staff assignment                                                       |
+| Teams      | Team module                    | CRUD, team members, staff assignment, tenant scope                                                            |
+| Documents  | Documents module               | Upload, download, replace, deactivate, delete, purge                                                          |
+| Attendance | Lock rules                     | Lock only after event end, locked read-only                                                                   |
+| Events     | Lifecycle rules                | Edit/delete behavior with lineup, draft attendance and locked attendance                                      |
+| Finance    | Finance module                 | Charges, payments, status calculation, financial card                                                         |
 
 ---
 
