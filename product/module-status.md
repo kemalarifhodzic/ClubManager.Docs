@@ -1,388 +1,387 @@
 # ClubManager Module Status
 
-Ovaj dokument prati kratki operativni status ClubManager modula.
+`module-status.md` je operativni komandni centar ClubManager projekta.
 
-Za detaljan inventory koristiti:
+Ovaj dokument se izvodi iz:
 
 ```text
 docs/product/clubmanager-inventory.md
 ```
 
-Za tehničku mapu površine koristiti:
+Inventory je product source of truth.
+Module Status odlučuje šta ide u cleanup, šta ide na testiranje, šta se odlaže i šta se nakon dokaza vraća u inventory.
+
+---
+
+## Process rule
+
+* `clubmanager-inventory.md` je product source of truth.
+* Svaki inventory red mora imati `Inventory ID`.
+* `module-status.md` je operativni komandni centar.
+* Cleanup i testing redovi moraju referencirati `Inventory ID`.
+* Bez `Inventory ID` nema cleanup-a.
+* Bez `Inventory ID` nema test assignmenta.
+* Bez `Inventory ID` nema `Verified` update-a u inventory-ju.
+* Tester ne ažurira inventory.
+* Developer ne proglašava feature `Verified`.
+* Inventory ažurira voditelj procesa nakon dokaza iz testiranja i pregleda otvorenih cleanup stavki.
+
+Tok rada:
 
 ```text
-docs/product/system-surface-map.md
+clubmanager-inventory.md
+    ↓
+module-status.md
+    ↓
+Needs Cleanup / Ready for Testing
+    ↓
+developer fix / tester result
+    ↓
+module-status.md
+    ↓
+clubmanager-inventory.md
 ```
 
-Za strateški pregled i širi portfolio koristiti OneNote.
+---
+
+## Release focus
+
+| Release              | Fokus                                            | Notes                                         |
+| -------------------- | ------------------------------------------------ | --------------------------------------------- |
+| R1 Tenant Production | Tenant App core modules                          | Fokus na sekretara i vlasnika/menadžera kluba |
+| R1.5 Player Portal   | Player Portal rollout and cleanup                | Nakon stabilizacije Tenant App-a              |
+| R2 Admin Platform    | Admin Platform polish                            | Admin users, roles, audit, settings, seasons  |
+| R3 Platform Billing  | Platform Billing polish                          | Plans, subscriptions, invoices, payments      |
+| Later                | Notifications, advanced reports, premium modules | Nije R1 fokus                                 |
 
 ---
 
 ## Status legenda
 
-| Status             | Značenje                                                |
-| ------------------ | ------------------------------------------------------- |
-| Done               | Završeno i trenutno nema aktivnog rada                  |
-| In Progress        | Aktivno se radi                                         |
-| Next               | Sljedeće za rad                                         |
-| Needs Verification | Treba provjeriti kroz kod, bazu, Swagger ili aplikaciju |
-| Needs Cleanup      | Radi ili djelimično radi, ali ima poznat dug/rizik      |
-| Blocked            | Blokirano zbog greške, odluke ili zavisnosti            |
-| Later              | Planirano za kasnije                                    |
-| Deprecated         | Više se ne koristi                                      |
+| Status             | Značenje                                                                |
+| ------------------ | ----------------------------------------------------------------------- |
+| Done               | Završeno i trenutno nema aktivnog rada                                  |
+| In Progress        | Aktivno se radi                                                         |
+| Needs Cleanup      | Feature postoji, ali ima poznat tehnički, sigurnosni, UX ili data rizik |
+| Needs Verification | Feature postoji, ali još nije dobio konkretan test assignment           |
+| Ready for Testing  | Konkretan test je izdat testeru                                         |
+| Testing            | Tester radi                                                             |
+| Returned           | Tester vratio rezultat                                                  |
+| Closed             | Rezultat obrađen u module-statusu                                       |
+| Deferred           | Svjesno odloženo                                                        |
+| Later              | Planirano za kasnije                                                    |
+| Deprecated         | Više se ne koristi                                                      |
 
 ---
 
 ## Done
 
-| Module        | Feature                    | Status | Notes                                                                                                           |
-| ------------- | -------------------------- | ------ | --------------------------------------------------------------------------------------------------------------- |
-| Documentation | Central docs structure     | Done   | Kreiran centralni folder `/home/kemo/ClubManager/docs`                                                          |
-| Documentation | OneNote structure          | Done   | OneNote se koristi kao radna tabla / pregled                                                                    |
-| Documentation | Central docs Git repo      | Done   | `/home/kemo/ClubManager/docs` je poseban Git repo i centralna dokumentacija projekta                            |
-| Documentation | System Surface Map v1      | Done   | API, Tenant FE, Admin FE i Player FE površina su mapirani                                                       |
-| Photos        | Photo/avatar pipeline      | Done   | Standardized `PersonThumb/usePersonPhoto/mediaStore` pipeline; legacy photo cache removed and manually verified |
-| Player Portal | Player FE osnovne stranice | Done   | Profil, događaji, prisustvo i članarine su provjereni nakon player login-a                                      |
+| Inventory ID | Release              | Area              | Domain        | Module                | Feature                 | Status   | Notes                                                                                                |
+| ------------ | -------------------- | ----------------- | ------------- | --------------------- | ----------------------- | -------- | ---------------------------------------------------------------------------------------------------- |
+| INV-0001     | R1 Tenant Production | Platform / System | Documentation | Documentation         | Central docs repository | Verified | `/home/kemo/ClubManager/docs` je poseban Git repo                                                    |
+| INV-0002     | R1 Tenant Production | Platform / System | Documentation | System Map            | System Surface Map v1   | Verified | API, Tenant FE, Admin FE i Player FE površina su mapirani                                            |
+| INV-0044     | R1 Tenant Production | Tenant App        | People        | Players               | Player photo            | Polished | Verificirani photo pipeline; ranije ručno potvrđeno kroz player/staff upload/delete/list/detail test |
+| INV-0054     | R1 Tenant Production | Tenant App        | People        | Staff                 | Staff photo             | Polished | Staff photo backend i standardni photo pipeline potvrđeni kroz ručni player/staff photo test         |
+| INV-0116     | R1 Tenant Production | Tenant App        | Shared UI     | Photos                | Photo/avatar pipeline   | Polished | Standardizovan `PersonThumb/usePersonPhoto/mediaStore` pipeline                                      |
+| INV-0117     | R1.5 Player Portal   | Player Portal App | Player Portal | Login / player guard  | Player login            | Verified | Manual docs confirm dashboard after login                                                            |
+| INV-0120     | R1.5 Player Portal   | Player Portal App | Player Portal | App shell / dashboard | Dashboard               | Verified | Core flow manually documented                                                                        |
+| INV-0121     | R1.5 Player Portal   | Player Portal App | Player Portal | Profile               | Profile page            | Verified | Core flow manually documented                                                                        |
+| INV-0123     | R1.5 Player Portal   | Player Portal App | Player Portal | Events                | Events list             | Verified | Core flow manually documented                                                                        |
+| INV-0125     | R1.5 Player Portal   | Player Portal App | Player Portal | Attendance            | Attendance summary/list | Verified | Manual docs confirm attendance; locked-only rule remains open                                        |
+| INV-0126     | R1.5 Player Portal   | Player Portal App | Player Portal | Finance / članarine   | Finance summary/list    | Verified | Manual docs confirm finance                                                                          |
 
 ---
 
 ## In Progress
 
-| Module        | Feature                          | Status      | Notes                                                                                                                                                               |
-| ------------- | -------------------------------- | ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Documentation | Product Inventory v2.1           | In Progress | Glavni inventory je ažuriran kroz FE surface audit, Backend/API audit i DB schema audit za sve glavne oblasti                                                       |
-| Verification  | Audit coverage completed         | In Progress | Codex audit završen za People, Teams, Events, Finance, Documents Engine, Club / Operations, Admin Platform, Platform Billing, Player Portal App i Platform / System |
-| Cleanup       | Central cleanup backlog          | In Progress | Nalazi iz svih audita su objedinjeni u `Needs Cleanup`; sljedeći korak je prioritetizacija                                                                          |
-| Testing       | Functional verification planning | In Progress | Manual functional testovi još nisu sistematski pokrenuti; kreću nakon kritičnog cleanup-a                                                                           |
-
----
-
-## Audit coverage tracker
-
-| Scope                | FE audit | Backend/API audit | DB schema audit | Manual test | Status                         |
-| -------------------- | -------- | ----------------- | --------------- | ----------- | ------------------------------ |
-| Tenant App → People  | Done     | Done              | Done            | Partial     | Cleanup + functional test next |
-| Tenant App → Teams   | Pending  | Pending           | Pending         | No          | Next audit                     |
-| Tenant App → Events  | Pending  | Pending           | Pending         | No          | Pending                        |
-| Tenant App → Finance | Pending  | Pending           | Pending         | No          | Pending                        |
-| Admin App            | Done     | Pending           | Pending         | Partial     | Pending BE/DB audit            |
-| Platform Billing     | Done     | Pending           | Pending         | Partial     | Pending BE/DB audit            |
-| Player Portal App    | Done     | Partial           | Partial         | Yes         | Core verified, cleanup pending |
-
----
-
----
-
-## Audit coverage completed
-
-| Area              | Domain / Module     | FE surface audit | Backend/API audit | DB schema audit | Manual functional test | Notes                                                                                  |
-| ----------------- | ------------------- | ---------------- | ----------------- | --------------- | ---------------------- | -------------------------------------------------------------------------------------- |
-| Tenant App        | People              | Done             | Done              | Done            | Partial                | Photo pipeline i Player Portal CORE imaju manual evidence; ostalo čeka functional test |
-| Tenant App        | Teams               | Done             | Done              | Done            | No                     | Audit završen; Team CRUD i Staff memberships imaju cleanup stavke                      |
-| Tenant App        | Events              | Done             | Done              | Done            | No                     | Audit završen; lifecycle/complete i attendance lock cleanup ostaju                     |
-| Tenant App        | Finance             | Done             | Done              | Done            | No                     | Audit završen; status calculation, exports i FE caps cleanup ostaju                    |
-| Tenant App        | Documents Engine    | Done             | Done              | Done            | No                     | Audit završen; Club entity/schema i document type mismatch su kritični cleanup         |
-| Tenant App        | Club / Operations   | Done             | Done              | Done            | No                     | Audit završen; dashboard/users/settings/shell cleanup ostaje                           |
-| Admin App         | Platform Management | Done             | Done              | Done            | Partial                | Clubs core djelimično testiran; dosta admin stranica su placeholderi                   |
-| Platform Billing  | Billing             | Done             | Done              | Done            | Partial                | Core billing postoji; storno/audit/status cleanup je važan                             |
-| Player Portal App | Player Portal       | Done             | Done              | Done            | Partial / Yes for CORE | CORE je ručno potvrđen; password reset, notifications i guard cleanup ostaju           |
-| Platform / System | System              | Done             | Done              | Done            | No                     | Auth/settings/lookups/seasons/health/dev/caps audit završen; security cleanup ostaje   |
-
-## People audit status
-
-Backend/API audit za `Tenant App → People` je urađen nad stvarnim backend source kodom i DB dumpom.
-
-Audit evidence:
-
-```text
-Backend/API source:
- /mnt/c/Users/kemo/source/repos/WEB/ClubManager/src
-
-Database schema dump:
- /home/kemo/ClubManager/docs/database/shema.sql
-```
-
-Zaključak:
-
-```text
-People blok više nije blokiran nedostatkom backend dokaza.
-Većina People funkcionalnosti ima potvrđen BE/API i DB surface.
-Status se ne diže na Verified dok ne prođe manual functional test.
-```
-
-| Module                   | Current status  | Verification level                       | Main blockers / notes                                                        |
-| ------------------------ | --------------- | ---------------------------------------- | ---------------------------------------------------------------------------- |
-| Players                  | Implemented     | BE/FE/DB confirmed; manual test pending  | JMBG semantic validation, duplicate create flow, birthDate auto-fill cleanup |
-| Player photo             | Done / Polished | Manual test done                         | Nema kritičnog blockera                                                      |
-| Player registrations     | Implemented     | BE/FE/DB confirmed; manual test pending  | Functional CRUD test required                                                |
-| Player medicals          | Implemented     | BE/FE/DB confirmed; manual test pending  | Functional CRUD test + eligibility impact required                           |
-| Player documents         | Implemented     | BE/FE/DB confirmed; manual test pending  | Full lifecycle test required: upload/replace/delete/restore/purge            |
-| Contracts                | Needs Cleanup   | BE/FE/DB confirmed; manual test pending  | FE raw debug alert; lock/verified behavior test                              |
-| Contract verification    | Implemented     | BE/FE/DB confirmed; manual test pending  | Verified-lock behavior test                                                  |
-| Eligibility Lite         | Implemented     | BE/FE/DB confirmed; manual test pending  | Valid/invalid scenario test                                                  |
-| Staff CRUD               | Needs Cleanup   | FE/DB confirmed; BE partial due to risks | `ManageStaff` mismatch, role/sort filter, nullability mismatch               |
-| Staff photo              | Done / Polished | Manual photo pipeline test done          | Nema kritičnog blockera                                                      |
-| Team staff assignment    | Needs Cleanup   | BE/FE/DB confirmed with gaps             | Error handling može vratiti 500 umjesto kontrolisanog 400                    |
-| Player Portal activation | Needs Cleanup   | Functionally tested; BE risk found       | Cross-club risk u tenant-side activation service-u                           |
-
-Decision notes:
-
-* Backend/API audit je potvrdio stvarne controller/service/entity/schema dokaze za People blok.
-* Većina People redova u inventory-ju može biti `Implemented`, ne više `Partial` zbog nedostatka backend evidence-a.
-* Player photo i Staff photo mogu ostati `Polished` jer je zajednički photo/avatar pipeline ručno testiran.
-* Player Portal CORE je funkcionalno testiran, ali tenant-side activation ostaje `Needs Cleanup` zbog backend cross-club scope rizika.
-* Staff modul ostaje `Needs Cleanup` dok se ne riješe permisije, filteri i DB/DTO nullability mismatch.
-* Manual functional testing je i dalje potreban prije statusa `Verified`.
-
----
-
-## Next
-
-> Napomena: People, Teams, Events, Finance i Documents Engine su već prošli FE surface + Backend/API + DB schema audit. Sljedeći prioriteti su preostali audit blokovi, zatim cleanup, pa manual functional verification.
-
-| Priority | Module                   | Feature                                    | Notes                                                                                           |
-| -------- | ------------------------ | ------------------------------------------ | ----------------------------------------------------------------------------------------------- |
-| 1        | Club / Users / Dashboard | Codex audit tenant club operations         | Users, dashboard, club profile/branding                                                         |
-| 2        | Admin Platform           | Codex audit Admin App                      | Clubs, users, roles, audit, settings, seasons, feature toggles                                  |
-| 3        | Platform Billing         | Codex audit Platform Billing               | Plans, subscriptions, invoices, invoice payments, standalone payments, ops/finalize             |
-| 4        | Player Portal App        | Codex audit Player Portal cleanup          | Notifications mock, missing password reset route, role guards, profile photo standard           |
-| 5        | Platform / System        | Codex audit system modules                 | Auth, account, settings, lookups, photo config, meta/health, dev diagnostics                    |
-| 6        | People cleanup           | Critical cleanup before final verification | Player Portal club scoping, Staff permissions, Staff JMBG nullability, Team staff errors        |
-| 7        | Teams cleanup            | Cleanup before final verification          | Team CRUD validation/error mapping, edit route guard, staff membership error handling           |
-| 8        | Events cleanup           | Cleanup before final verification          | Complete endpoint, cancelled-event attendance lock, prompt/alert UX, EventAttendancePage legacy |
-| 9        | Finance cleanup          | Cleanup before final verification          | Invoice status source of truth, exports UI, category caps, payment method mismatch              |
-| 10       | Documents cleanup        | Cleanup before final verification          | Club entity schema mismatch, LicenseDocument mismatch, deleted_at, purge consistency            |
-| 11       | Functional tests         | People + Teams                             | Run manual tests after audit coverage and critical cleanup                                      |
-| 12       | Functional tests         | Events + Finance + Documents               | Run manual tests after their cleanup notes are documented                                       |
-| 13       | Functional tests         | Admin + Billing + Player Portal + System   | Run after remaining audits are completed                                                        |
-
----
-
-## Needs Verification
-
-| Module               | Feature                        | What to verify                                                                                                        |
-| -------------------- | ------------------------------ | --------------------------------------------------------------------------------------------------------------------- |
-| Players              | Player CRUD                    | Create, edit, detail, delete, refresh/reload behavior, duplicate create flow                                          |
-| Players              | JMBG validation                | Format, duplicate-in-club, invalid semantic JMBG, birth-date consistency if implemented                               |
-| Players              | Birth date auto-fill from JMBG | Primary `PlayerForm` create/edit flow should be checked; auto-fill currently appears only in older modal flow         |
-| Player photo         | Photo workflow                 | Already polished, but keep regression test for upload/delete/list/detail/edit display                                 |
-| Player Registrations | Registrations                  | CRUD, player detail tab, permissions, duplicate active registration behavior                                          |
-| Player Medicals      | Medical records                | CRUD, player detail tab, status/expiry behavior, eligibility impact                                                   |
-| Documents            | Documents module               | Upload, download, replace, restore, purge, permissions                                                                |
-| Contracts            | Contracts module               | CRUD, player detail tab, verify endpoint, verified-lock behavior                                                      |
-| Eligibility          | Eligibility Lite               | Feature flag, endpoint behavior, player detail integration, valid/invalid scenarios                                   |
-| Staff                | Staff module                   | Staff CRUD, photo upload/delete, quick create vs edit form, permissions, country/date logic and team staff assignment |
-| Team staff           | Assignment flow                | Add/update/end membership, validation errors, controlled 400 instead of 500                                           |
-| Teams                | Team module                    | CRUD, team members, staff assignment, tenant scope                                                                    |
-| Events               | Lifecycle rules                | Edit/delete behavior with lineup, draft attendance and locked attendance                                              |
-| Attendance           | Lock rules                     | Lock only after event end, locked read-only, statistics from locked attendance                                        |
-| Lineup               | MatchList / Lineup             | Lineup display, staff candidates, lock/unlock behavior                                                                |
-| Finance Fees         | Fee module                     | Charges, payments, status calculation, bulk ops, storno, export                                                       |
-| Finance General      | Transactions/categories        | CRUD, storno, export, category behavior                                                                               |
-| Users                | Tenant users                   | Create/update/activate/deactivate/set-password, role/cap behavior                                                     |
-| Admin Platform       | Admin FE                       | Active clubs/billing screens and placeholder modules                                                                  |
-| Platform Billing     | Billing module                 | Plans, subscriptions, invoices, invoice payments, standalone payments placeholder                                     |
-| Player FE            | Cleanup items                  | Notifications mock, missing password-reset route, duplicated role guards, legacy files                                |
-| Dev Diagnostics      | Dev/system endpoints           | Confirm dev/debug endpoints are not exposed where they should not be                                                  |
+| Inventory ID | Release              | Area              | Domain    | Module           | Feature                      | Status      | Notes                                                             |
+| ------------ | -------------------- | ----------------- | --------- | ---------------- | ---------------------------- | ----------- | ----------------------------------------------------------------- |
+| INV-0003     | R1 Tenant Production | Platform / System | System    | Auth / Account   | Login                        | In Progress | Implemented; treba functional verification u Tenant App kontekstu |
+| INV-0040     | R1 Tenant Production | Tenant App        | People    | Players          | Player CRUD                  | In Progress | Implemented; čeka functional verification                         |
+| INV-0053     | R1 Tenant Production | Tenant App        | People    | Staff            | Staff CRUD                   | In Progress | Implemented, ali cleanup prije finalne verifikacije               |
+| INV-0058     | R1 Tenant Production | Tenant App        | Teams     | Teams            | Team CRUD                    | In Progress | Implemented, ali cleanup prije finalne verifikacije               |
+| INV-0064     | R1 Tenant Production | Tenant App        | Events    | Event Core       | Event CRUD                   | In Progress | Implemented; čeka functional verification                         |
+| INV-0075     | R1 Tenant Production | Tenant App        | Finance   | Fees / Članarine | Fee invoices                 | In Progress | Implemented; čeka functional verification                         |
+| INV-0095     | R1 Tenant Production | Tenant App        | Documents | Documents Engine | Documents list/search/filter | In Progress | Implemented; čeka functional verification                         |
 
 ---
 
 ## Needs Cleanup
 
-| Module                | Feature                             | Reason                                                                                                                  | Next action                                                                       |
-| --------------------- | ----------------------------------- | ----------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- |
-| Player Portal         | Tenant-side activation              | Backend service queries player by `playerId` without explicit `clubId` filter while using `app.is_admin`                | Add explicit club scoping and retest cross-club access                            |
-| Staff                 | Permissions                         | Staff write operations use `ManagePlayers` although `ManageStaff` exists                                                | Standardize Staff permissions to `ManageStaff`                                    |
-| Staff                 | DB/DTO consistency                  | DB `staff.jmbg` is `NOT NULL`, while entity/DTO allow nullable                                                          | Decide final rule and align DB/entity/DTO/validators                              |
-| Staff                 | List filters                        | `role` and `sort` params are accepted, but service does not visibly apply all of them                                   | Apply or remove unsupported filters                                               |
-| Team staff assignment | Error handling                      | Some validation failures may throw `ArgumentException` and result in 500                                                | Convert known validation errors to controlled 400 responses                       |
-| Contracts             | FE debug alert                      | Contract form contains raw `alert(JSON.stringify(err.response?.data, null, 2))`                                         | Replace with standard error UI                                                    |
-| Documents Engine      | Entity/schema mismatch              | Service allows `Club` entity, schema appears to allow only `Player` and `Staff`                                         | Align schema/service or document scope limitation                                 |
-| Players               | Duplicate create flow               | Routed `PlayerCreatePage` and older modal create flow both exist                                                        | Choose primary flow and clean legacy path                                         |
-| Players               | JMBG auto-fill                      | Auto-fill exists in older flow, not clearly in primary `PlayerForm`                                                     | Move/standardize behavior in primary Player form                                  |
-| Teams                 | Team CRUD validation                | Validators postoje, ali nema jasnog dokaza da se aktivno pozivaju; DB greške mogu izaći kao 500                         | Standardizovati validation/error mapping za create/update                         |
-| Teams                 | Duplicate team name                 | DB unique index postoji, ali duplicate name možda izlazi kao DB exception                                               | Mapirati duplicate team name na kontrolisani 409/400                              |
-| Teams                 | Edit route guard                    | `/teams/:id/edit` nije jasno zaštićen sa `RequireCap`                                                                   | Dodati FE cap guard za direktan URL                                               |
-| Teams                 | Team list sort                      | FE šalje `sort`, backend ga ignoriše                                                                                    | Ili implementirati sort na BE, ili ukloniti/slomiti očekivanje u FE               |
-| Team memberships      | Tenant/RLS consistency              | `team_memberships` nema direktni `club_id`; oslanja se na service checks i FKs                                          | Ostaviti kao poznati rizik ili kasnije razmotriti jačanje schema/RLS modela       |
-| Staff memberships     | Error handling                      | `ArgumentException` može rezultirati 500 greškom                                                                        | Pretvoriti poznate validation greške u kontrolisani 400                           |
-| Staff memberships     | Duplicate service surface           | Starije staff membership metode postoje i u `TeamService`, iako aktivni controller koristi `TeamStaffMembershipService` | Očistiti ili jasno označiti aktivni service                                       |
-| Staff detail          | Team assignment placeholder         | Staff detail ima placeholder “assign team”, dok realni flow postoji kroz Team detail                                    | Ukloniti placeholder ili preusmjeriti na Team detail flow                         |
-| Events                | Complete endpoint                   | `Complete` endpoint izgleda logički sumnjivo: odbija past-ended događaje i koristi poruku za cancel                     | Provjeriti i ispraviti complete lifecycle pravilo                                 |
-| Events                | Attendance lock on cancelled event  | Nema jasnog dokaza da lock attendance blokira cancelled event                                                           | Dodati/provjeriti backend guard za cancelled event                                |
-| Events                | Event attendance RLS                | `event_attendance` nema direktan RLS dokaz; zaštita se oslanja na event-scoped service checks                           | Ostaviti kao rizik ili kasnije pojačati schema/RLS model                          |
-| Events                | Player Portal attendance visibility | Player portal attendance ne filtrira vidljivo samo locked attendance, za razliku od team stats                          | Donijeti odluku: player vidi draft ili samo locked attendance                     |
-| Events                | FE lifecycle UX                     | FE koristi `alert`, `confirm`, `window.prompt` za bitne workflowe                                                       | Kasnije zamijeniti standardnim modalima                                           |
-| Events                | Legacy route/file                   | `EventAttendancePage.tsx` postoji, ali nije routan                                                                      | Očistiti ili označiti kao deprecated                                              |
-| Lineup / MatchList    | Export                              | Print postoji, export/download nema evidence                                                                            | Ili dodati export ili ukloniti očekivanje iz dokumentacije                        |
-| Finance Fees          | Invoice status calculation          | `fee_invoices.status` je stored vrijednost, a dio čitanja status računa iz uplata; postoji rizik drift-a                | Standardizovati source of truth za status                                         |
-| Finance Fees          | Direct invoice CRUD                 | Bulk create postoji, ali single create UI/API nije aktivno potvrđen; update/delete API nije izložen u UI                | Odlučiti da li direct CRUD treba biti aktivan feature ili samo backend/admin alat |
-| Finance Fees          | Exports                             | CSV export endpointi postoje, ali tenant FE export UI nije pronađen                                                     | Dodati UI ili označiti export kao backend-only                                    |
-| Finance Fees          | Payment method                      | FE prikazuje/šalje payment method, ali backend ga ne perzistira jasno pri create                                        | Uskladiti FE polje i backend DTO/model                                            |
-| Finance Fees          | `fee_payments` RLS                  | Nema direktnog RLS dokaza za `fee_payments`; zaštita se oslanja na invoice/service scope                                | Ostaviti kao poznati rizik ili pojačati DB-level zaštitu                          |
-| General Finance       | Category FE permissions             | `FinanceCategoriesPage` nema vidljiv FE cap guard za write akcije                                                       | Dodati FE capability guard za create/edit/delete                                  |
-| General Finance       | Category code behavior              | FE šalje `code`, backend generiše code iz naziva i ignoriše poslani code                                                | Uskladiti UI sa backend pravilom                                                  |
-| General Finance       | Transaction storno relation         | Storno je označen kroz description marker, nema eksplicitnog FK odnosa original ↔ reversal                              | Razmotriti strukturirani reversal/original transaction link                       |
-| General Finance       | Transaction export                  | Backend export postoji, ali UI nije pronađen                                                                            | Dodati UI ili dokumentovati kao backend-only                                      |
-| General Finance       | Summary/report                      | Nema general finance summary endpointa; FE prikazuje samo lokalne totals za učitane podatke                             | Planirati pravi summary/report endpoint ako treba                                 |
-| Finance FE            | Legacy placeholder                  | `FinanceTransactionsPage.tsx` je placeholder, aktivna ruta koristi `FinTransactionsPage.tsx`                            | Očistiti ili označiti kao deprecated                                              |
-| Finance FE            | Endpoint naming                     | Koegzistiraju `EP.finance`, `EP.fin`, `EP.fees`                                                                         | Kasnije standardizovati naming                                                    |
-| Documents Engine      | Club documents support              | Service podržava `Club`, ali DB schema dopušta samo `Player` i `Staff`                                                  | Odlučiti: ukloniti Club iz service-a ili proširiti schema constraint              |
-| Documents Engine      | Document type mismatch              | FE koristi `LicenseDocument`, backend/schema očekuju `QualificationDocument`                                            | Uskladiti FE dropdown i backend/schema tipove                                     |
-| Documents Engine      | Soft delete metadata                | Soft delete ne popunjava `deleted_at`                                                                                   | Popuniti `deleted_at` ili ukloniti očekivanje iz lifecycle-a                      |
-| Documents Engine      | Purge consistency                   | DB se označi kao purged prije fizičkog brisanja fajla; moguć DB/filesystem drift                                        | Promijeniti redoslijed ili dodati recovery/consistency handling                   |
-| Documents Engine      | Coarse permissions                  | List/detail/download traže `ManageDocuments`; nema read-only document capability                                        | Odlučiti da li treba `ViewDocuments` ili ostaje samo manage                       |
-| Documents Engine      | Staff documents UI                  | Backend/schema podržavaju Staff dokumente, ali FE surface nije pronađen                                                 | Planirati Staff documents tab ili označiti kao backend-only                       |
-| Documents Engine      | Club documents UI                   | Nema FE surface-a za Club dokumente                                                                                     | Ne razvijati dok se ne riješi schema/service mismatch                             |
-| Documents Engine      | Document history visibility         | Replaced/archived dokumenti nisu jasno vidljivi u Player tab default prikazu                                            | Odlučiti da li history treba biti korisnički vidljiv                              |
-| Documents Engine      | Endpoint helpers                    | `api.endpoints.ts` ima samo djelimičan documents helper; aktivni kod koristi raw URL-e                                  | Kasnije standardizovati endpoint helper                                           |
-| Dashboard             | Backend capability                  | `GET /api/dashboard` nema backend `ReadOnly` capability, iako FE očekuje `ReadOnly`                                     | Dodati backend cap guard ili svjesno dokumentovati dashboard kao TenantOnly read  |
-| Tenant users          | User list permission                | `GET /api/users` nema backend `ManageUsers` capability, iako FE krije page bez `ManageUsers`                            | Dodati backend `ManageUsers` na list endpoint                                     |
-| Tenant users          | User detail endpoint                | `GET /api/users/{id}` je placeholder, dok `PUT /api/users/{id}` postoji                                                 | Implementirati detail ili ukloniti/označiti endpoint kao nedovršen                |
-| Tenant users          | Deactivation safety                 | Nema vidljive zaštite od self-deactivation ili deaktivacije zadnjeg manager-like korisnika                              | Dodati sigurnosna pravila ili svjesno dokumentovati odluku                        |
-| Tenant settings       | Capability mismatch                 | Settings write/delete koriste `ManageUsers`, iako postoji `ManageSettings`                                              | Prebaciti na `ManageSettings` ili dokumentovati privremenu odluku                 |
-| Club profile          | Summary placeholders                | `/clubs/me/summary` vraća placeholder/hardcoded vrijednosti                                                             | Popuniti stvarne vrijednosti ili ograničiti prikaz                                |
-| Club branding         | Tenant logo management              | Tenant nema upload/delete logo UI/API; admin-side only                                                                  | Odlučiti da li klub smije sam upravljati logom                                    |
-| Shell                 | Duplicate tenant context            | `TenantBoot` i `TenantProvider` dupliraju club summary/context loading                                                  | Pojednostaviti tenant context flow                                                |
-| Shell                 | UI-only topbar actions              | Search/help/notifications su vidljivi, ali nisu funkcionalni                                                            | Sakriti, disable-ovati ili implementirati                                         |
-| Logo                  | Content type                        | Logo endpoint može vratiti `image/jpeg` i za druge formate                                                              | Uskladiti content type sa stvarnim fajlom                                         |
-| Admin Platform        | Admin club-user permissions         | `AdminClubsUsersController` ima samo `AdminOnly`, bez eksplicitnog admin capability check-a                             | Dodati odgovarajuće `Admin.Users.*` ili `Admin.Clubs.*` capability guards         |
-| Admin Platform        | Feature toggle permissions          | `AdminClubFeaturesController` ima samo `AdminOnly`, bez eksplicitnog feature-toggle capability check-a                  | Dodati admin capability guard za feature toggles                                  |
-| Admin Platform        | Admin user create permission        | `POST /api/admin/users` nema vidljiv `Admin.Users.Manage` guard                                                         | Dodati `Admin.Users.Manage` capability                                            |
-| Admin Platform        | Admin set-password scope            | Admin set-password radi po raw user id                                                                                  | Provjeriti/dokumentovati pravilo i dodati safety checks ako treba                 |
-| Admin Platform        | Club list filters                   | FE šalje `search/status`, backend očekuje `q/isActive`                                                                  | Uskladiti query parametre                                                         |
-| Admin Platform        | Club details billing tabs           | Subscription/invoices tabovi su placeholder alerti                                                                      | Povezati sa Platform Billing ili ukloniti dok ne bude spremno                     |
-| Admin Platform        | Club users lifecycle                | Nema potpunih update/activate/deactivate endpointa ili FE flowa                                                         | Odlučiti minimalni admin user lifecycle                                           |
-| Admin Platform        | Feature toggle validation           | Backend nema whitelist feature key-eva; FE ima hardcoded listu                                                          | Dodati backend allowlist ili centralni endpoint za feature keys                   |
-| Admin Platform        | Placeholder pages                   | Dashboard, users, roles, audit, settings, seasons su aktivne nav rute, ali placeholderi                                 | Sakriti iz navigacije ili jasno označiti kao planned                              |
-| Admin Platform        | Logo validation                     | Club logo nema magic-byte validation evidence                                                                           | Uskladiti sa strožim file validation standardom ako treba                         |
-| Admin Platform        | Legacy/demo files                   | `index copy.css`, `react.svg`, generic `photoCache.ts` prave surface noise                                              | Očistiti nakon prioriteta                                                         |
-| Platform Billing      | Payment storno/reversal             | Platform payments imaju edit/delete, ali nemaju storno/reversal model                                                   | Odlučiti: uvesti storno model ili svjesno ograničiti billing kao ne-auditni modul |
-| Platform Billing      | Payment delete                      | Payment delete je destruktivan finansijski potez                                                                        | Zamijeniti storno workflowom ili ograničiti na draft/test režim                   |
-| Platform Billing      | Billing audit logging               | Billing mutacije nemaju vidljiv audit logging                                                                           | Dodati audit za plan/subscription/invoice/payment mutacije                        |
-| Platform Billing      | Invoice status source of truth      | Stored invoice status može driftati od payments/due date/finalizera                                                     | Standardizovati status kao computed ili dosljedno održavan                        |
-| Platform Billing      | Plan billing cycle                  | Yearly behavior nije jasno enforced; subscription renewal koristi mjesečnu logiku                                       | Uskladiti billing cycle sa renewal/invoice pravilima                              |
-| Platform Billing      | Subscription scheduled change       | Scheduled change-plan eksplicitno nije implementiran                                                                    | Ili implementirati ili ukloniti iz očekivanja/UI teksta                           |
-| Platform Billing      | Subscription past_due               | Status `past_due` postoji, ali nema jasnog transition pravila                                                           | Definisati kada i kako subscription prelazi u `past_due`                          |
-| Platform Billing      | Invoice create validation           | Zero-amount invoice izgleda dozvoljen                                                                                   | Odlučiti da li je dozvoljeno; ako nije, validirati `amount > 0`                   |
-| Platform Billing      | FE capability guards                | Admin FE billing akcije nisu capability-aware                                                                           | Dodati FE cap guards ili se osloniti isključivo na backend uz bolji UX            |
-| Platform Billing      | Client-side filtering               | FE često filtrira lokalno nakon prvog page-a                                                                            | Uskladiti FE filtere sa backend paged/filter endpointima                          |
-| Platform Billing      | Standalone payments                 | `/payments` ruta je placeholder, nema standalone API                                                                    | Sakriti rutu ili implementirati stvarni modul                                     |
-| Platform Billing      | Exports                             | Nema export API/UI za platform billing                                                                                  | Planirati ili ostaviti kao Planned                                                |
-| Player Portal App     | Password reset route                | Login vodi na `/password-reset`, ali Player FE nema tu rutu/page                                                        | Dodati route/page ili ukloniti link dok nije spremno                              |
-| Player Portal App     | Notifications                       | Notifications page koristi mock podatke, nema backend/API                                                               | Označiti kao planned/mock ili sakriti iz navigacije                               |
-| Player Portal App     | Role guards                         | `ProtectedRoute` i `PlayerAuthGuard` imaju duplu i nekonzistentnu role provjeru                                         | Konsolidovati guard logiku                                                        |
-| Player Portal App     | Profile photo standard              | Profile photo koristi `usePersonPhoto`, ali ne standardni `PersonThumb` wrapper                                         | Prebaciti na standardni `PersonThumb` obrazac                                     |
-| Player Portal App     | Attendance visibility               | Player attendance ne filtrira vidljivo samo locked attendance                                                           | Donijeti product odluku: player vidi draft ili samo zaključanu prisutnost         |
-| Player Portal App     | Club name display                   | Sidebar hardcodira `ClubManager`, topbar koristi realni club name                                                       | Uskladiti prikaz naziva kluba                                                     |
-| Player Portal App     | Legacy files                        | Stari `fetchSecurePhoto`, `photoCache`, duplicate EventsPage, duplicate sidebar i `PersonThumb copy` ostaju u repo-u    | Očistiti nakon stabilizacije                                                      |
-| Player Portal App     | Broad endpoint catalog              | `api.endpoints.ts` sadrži široke tenant/admin endpoint-e koji se ne koriste u player-fe                                 | Očistiti ili ograničiti na player-fe surface                                      |
-| Platform / System     | Password reset FE mismatch          | FE koristi `/auth/password-reset/request`, backend ruta je `/auth/password/reset`                                       | Uskladiti endpoint konstante i testirati reset flow                               |
-| Platform / System     | Player password reset route         | Player FE link vodi na `/password-reset`, ali ruta/page ne postoji                                                      | Dodati rutu/page ili ukloniti link                                                |
-| Platform / System     | Dev diagnostics exposure            | Dio `/api/dev/*` endpointa je routable bez eksplicitnog Development-only wrappera                                       | Ograničiti na Development ili jasno dokumentovati zaštitu                         |
-| Platform / System     | Admin impersonation                 | `X-Impersonate-Club` ne traži vidljivo `Admin.Ops.Impersonate`                                                          | Dodati capability check za impersonation                                          |
-| Platform / System     | Tenant settings capability          | Tenant settings write/delete koriste `ManageUsers`, iako postoji `ManageSettings`                                       | Prebaciti na `ManageSettings`                                                     |
-| Platform / System     | Health/readiness exposure           | `/healthz` i `/readyz` su anonymous i izlažu env/DB readiness detalje                                                   | Definisati šta smije biti javno po okruženju                                      |
-| Platform / System     | Default season behavior             | `/api/seasons/default` traži eksplicitni default, dok FE provider fallbacka na latest/empty                             | Uskladiti API i FE očekivanje                                                     |
-| Platform / System     | JWT generation                      | `JwtTokenService` postoji, ali login koristi lokalni `BuildJwt`                                                         | Centralizovati JWT generation                                                     |
-| Platform / System     | Capability constants                | FE cap konstante ne pokrivaju sve BE capove (`ManageSettings`, `ManageStaff`, `ExportFinance`, player caps)             | Uskladiti FE/BE cap source                                                        |
-| Platform / System     | Player auth guards                  | Player FE ima duple i nekonzistentne role guardove                                                                      | Konsolidovati guard logiku                                                        |
-| Platform / System     | Auth/API duplication                | Tri FE aplikacije dupliraju AuthContext, JWT parsing, API clients i cap helpers                                         | Planirati kasniju standardizaciju shared obrazaca                                 |
-| Platform / System     | Admin FE API clients                | Admin FE ima `api/index.ts` i legacy-looking `lib/axios.ts`                                                             | Očistiti dupli API client                                                         |
+Ova tabela je ulaz za developerski cleanup.
+
+Pravila:
+
+* Svaki red mora imati `Cleanup ID`.
+* Svaki red mora imati `Inventory ID`.
+* Cleanup red bez `Inventory ID` nije validan.
+* `P0` mora biti riješen ili svjesno prihvaćen prije R1 test assignmenta koji pokriva isti `Inventory ID`.
+* `P1` uglavnom blokira `Verified`.
+* `P2` ne mora blokirati smoke/basic test, ali ostaje dug.
+
+| Cleanup ID    | Inventory ID | Release              | Priority | Area              | Domain              | Module                                    | Feature                                  | Reason                                                                                               | Next action                                                                         | Owner       | Status   | Notes                                                        |
+| ------------- | ------------ | -------------------- | -------- | ----------------- | ------------------- | ----------------------------------------- | ---------------------------------------- | ---------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- | ----------- | -------- | ------------------------------------------------------------ |
+| CLN-R1-P0-001 | INV-0056     | R1 Tenant Production | P0       | Tenant App        | People              | Staff                                     | Staff form validation                    | DB `staff.jmbg` je NOT NULL, dok DTO/entity dopuštaju nullable; validacija nije potpuno usklađena    | Donijeti pravilo za Staff JMBG i uskladiti DB/entity/DTO/validator                  | Dev/Product | Open     | Blokira pouzdanu Staff verifikaciju                          |
+| CLN-R1-P0-002 | INV-0097     | R1 Tenant Production | P0       | Tenant App        | Documents           | Documents Engine                          | Document upload                          | Player/Staff upload postoji, ali Club mismatch i FE type mismatch mogu blokirati normalan upload tok | Uskladiti FE/backend/schema za document upload tipove i podržane entity vrijednosti | Dev/Product | Open     | Povezano sa INV-0104 i INV-0110                              |
+| CLN-R1-P0-003 | INV-0104     | R1 Tenant Production | P0       | Tenant App        | Documents           | Documents Engine                          | Document type handling                   | FE koristi `LicenseDocument`, backend/schema očekuju `QualificationDocument`                         | Uskladiti FE dropdown i backend/schema tipove                                       | Dev         | Open     | Direktno blokira document upload test                        |
+| CLN-R1-P0-004 | INV-0110     | R1 Tenant Production | P0       | Tenant App        | Documents           | Documents Engine                          | Club documents usage                     | Service podržava `Club`, schema dopušta samo `Player` i `Staff`                                      | Odlučiti: Club documents nisu R1 ili proširiti schema constraint                    | Product/Dev | Open     | Ako Club docs nisu R1, prebaciti u Deferred                  |
+| CLN-R1-P1-001 | INV-0004     | R1 Tenant Production | P1       | Platform / System | System              | Auth / Account                            | JWT generation/claims                    | Claims postoje, ali token services su podijeljeni                                                    | Uskladiti JWT generation/claims i provjeriti role/cap ponašanje                     | Dev         | Open     | Ne blokira smoke, ali bitno za permission testove            |
+| CLN-R1-P1-002 | INV-0005     | R1 Tenant Production | P1       | Platform / System | System              | Permissions / capabilities infrastructure | Role/capability claims                   | Cap consistency issues                                                                               | Uskladiti FE/BE capability listu i testirati allow/deny role                        | Dev         | Open     | Povezano sa više permission testova                          |
+| CLN-R1-P1-003 | INV-0006     | R1 Tenant Production | P1       | Platform / System | System              | Auth / Account                            | Password reset request/set               | FE route/endpoint gaps                                                                               | Uskladiti FE endpoint ili izbaciti iz R1 scope-a                                    | Dev/Product | Open     | Ako nije R1, prebaciti u Deferred                            |
+| CLN-R1-P1-004 | INV-0016     | R1 Tenant Production | P1       | Platform / System | System              | Seasons                                   | Default season behavior                  | `/api/seasons/default` i FE fallback nemaju isto očekivanje                                          | Uskladiti API i FE default season ponašanje                                         | Dev         | Open     | Može uticati na forme i dashboard                            |
+| CLN-R1-P1-005 | INV-0022     | R1 Tenant Production | P1       | Tenant App        | Club / Operations   | Dashboard                                 | Tenant dashboard                         | Backend nema `ReadOnly` capability guard, iako FE očekuje `ReadOnly`                                 | Dodati backend capability ili dokumentovati kao TenantOnly read                     | Dev/Product | Open     | Permission cleanup; ne mora blokirati smoke                  |
+| CLN-R1-P1-006 | INV-0029     | R1 Tenant Production | P1       | Tenant App        | Club / Operations   | Users                                     | Tenant users list                        | Backend list endpoint nema `ManageUsers`, FE krije stranicu bez `ManageUsers`                        | Dodati backend `ManageUsers` na list endpoint                                       | Dev         | Open     | API direct access gap                                        |
+| CLN-R1-P1-007 | INV-0031     | R1 Tenant Production | P1       | Tenant App        | Club / Operations   | Users                                     | Tenant user activate/deactivate          | Self/last-manager protection nije vidljiva                                                           | Dodati zaštitu ili dokumentovati odluku                                             | Dev/Product | Open     | Sigurnosno-operativni edge case                              |
+| CLN-R1-P1-008 | INV-0035     | R1 Tenant Production | P1       | Tenant App        | Club / Operations   | Users                                     | Permission/capability enforcement        | Mutation caps su uglavnom ok, ali read/list gaps postoje                                             | Uskladiti read/list permission pravila                                              | Dev         | Open     | Povezano sa INV-0029                                         |
+| CLN-R1-P1-009 | INV-0036     | R1 Tenant Production | P1       | Tenant App        | Club / Operations   | Shell                                     | Tenant shell/sidebar/topbar club context | Dupliciran tenant context i placeholder akcije                                                       | Očistiti ili svjesno odložiti placeholder akcije                                    | Dev/Product | Open     | Shell treba biti stabilan za R1                              |
+| CLN-R1-P1-010 | INV-0041     | R1 Tenant Production | P1       | Tenant App        | People              | Players                                   | JMBG validation                          | Postoji 13-digit i uniqueness, nema checksum/date consistency                                        | Donijeti finalno pravilo JMBG validacije za R1                                      | Product/Dev | Open     | Može ostati format+unique za R1 ako se svjesno prihvati      |
+| CLN-R1-P1-011 | INV-0048     | R1 Tenant Production | P1       | Tenant App        | People              | Players                                   | Contracts module                         | FE audit našao raw debug `alert(JSON.stringify(...))`                                                | Zamijeniti standardnim error prikazom                                               | Dev         | Open     | UX/profesionalnost prije šireg testiranja                    |
+| CLN-R1-P1-012 | INV-0053     | R1 Tenant Production | P1       | Tenant App        | People              | Staff                                     | Staff CRUD                               | Staff koristi `ManagePlayers` umjesto `ManageStaff`; role/sort filter gap                            | Uskladiti Staff permissions i list filters                                          | Dev         | Open     | Blokira jasnu Staff permission verifikaciju                  |
+| CLN-R1-P1-013 | INV-0057     | R1 Tenant Production | P1       | Tenant App        | People              | Staff                                     | Team staff assignment                    | Validacija/error handling imaju gapove                                                               | Pretvoriti očekivane greške u kontrolisane 400 poruke                               | Dev         | Open     | Povezano sa Team detail flow                                 |
+| CLN-R1-P1-014 | INV-0058     | R1 Tenant Production | P1       | Tenant App        | Teams               | Teams                                     | Team CRUD                                | Backend validation/error mapping i FE edit route guard trebaju cleanup                               | Mapirati validation/duplicate greške i dodati route guard                           | Dev         | Open     | Blokira pouzdan Team CRUD test                               |
+| CLN-R1-P1-015 | INV-0061     | R1 Tenant Production | P1       | Tenant App        | Teams               | Memberships                               | Staff memberships                        | Validacija/error handling i dupli service surface trebaju cleanup                                    | Očistiti error handling i duple metode ako smetaju                                  | Dev         | Open     | Povezano sa Staff assignment testovima                       |
+| CLN-R1-P1-016 | INV-0066     | R1 Tenant Production | P1       | Tenant App        | Events              | Event Lifecycle                           | Event status lifecycle                   | Complete endpoint izgleda sumnjivo i nije surfacovan u FE                                            | Provjeriti i ispraviti complete lifecycle ponašanje                                 | Dev/Product | Open     | Cancel može ostati R1, complete možda nije R1                |
+| CLN-R1-P1-017 | INV-0068     | R1 Tenant Production | P1       | Tenant App        | Events              | Attendance                                | Attendance lock/unlock                   | Cancelled-event lock behavior i prompt UX trebaju cleanup                                            | Dodati/provjeriti guard za cancelled event; UX prompt odložiti ako treba            | Dev         | Open     | Lock/read-only je R1 važan                                   |
+| CLN-R1-P1-018 | INV-0078     | R1 Tenant Production | P1       | Tenant App        | Finance             | Fees / Članarine                          | Fee invoice status calculation           | Stored status može driftati od computed statusa                                                      | Standardizovati source of truth za invoice status                                   | Dev/Product | Open     | Bitno za finansijske testove                                 |
+| CLN-R1-P1-019 | INV-0087     | R1 Tenant Production | P1       | Tenant App        | Finance             | General Finance                           | Finance categories                       | FE write buttons lack cap guard; code field mismatch                                                 | Uskladiti FE cap guard i category code ponašanje                                    | Dev         | Open     | Ne mora blokirati fees, ali blokira General Finance verified |
+| CLN-R1-P1-020 | INV-0090     | R1 Tenant Production | P1       | Tenant App        | Finance             | General Finance                           | Transaction storno / reversal            | DB nema eksplicitnu reversal vezu                                                                    | Odlučiti da li je opis-marker dovoljan za R1                                        | Product/Dev | Open     | Za R1 može biti svjesno prihvaćeno                           |
+| CLN-R1-P1-021 | INV-0100     | R1 Tenant Production | P1       | Tenant App        | Documents           | Documents Engine                          | Document soft delete                     | `deleted_at` se ne popunjava                                                                         | Popuniti `deleted_at` ili ukloniti očekivanje                                       | Dev         | Open     | Lifecycle metadata                                           |
+| CLN-R1-P1-022 | INV-0102     | R1 Tenant Production | P1       | Tenant App        | Documents           | Documents Engine                          | Document purge                           | Moguć DB/filesystem drift                                                                            | Stabilizovati redoslijed ili dokumentovati recovery                                 | Dev         | Open     | Važno za purge test                                          |
+| CLN-R1-P1-023 | INV-0103     | R1 Tenant Production | P1       | Tenant App        | Documents           | Documents Engine                          | Document lifecycle/status                | Lifecycle metadata ima gaps                                                                          | Uskladiti status/lifecycle prikaz i backend metadata                                | Dev         | Open     | Povezano sa delete/restore/purge                             |
+| CLN-R1-P1-024 | INV-0107     | R1 Tenant Production | P1       | Tenant App        | Documents           | Documents Engine                          | Storage path strategy                    | Local FS, non-transactional DB/file operations                                                       | Dodati minimalnu zaštitu ili dokumentovati rizik za R1                              | Dev/Ops     | Open     | Storage consistency                                          |
+| CLN-R1-P1-025 | INV-0111     | R1 Tenant Production | P1       | Tenant App        | Documents           | Documents Engine                          | Document permissions/capabilities        | Permissions su zaštićene, ali previše coarse-grained                                                 | Odlučiti da li treba `ViewDocuments` ili ostaje `ManageDocuments`                   | Product/Dev | Open     | Permission model                                             |
+| CLN-R1-P2-001 | INV-0039     | R1 Tenant Production | P2       | Tenant App        | Club / Operations   | Shell                                     | UI-only topbar actions                   | Search/help/notifications nisu backed                                                                | Sakriti, disable-ovati ili ostaviti kao later                                       | Product/Dev | Open     | UI polish                                                    |
+| CLN-R1-P2-002 | INV-0042     | R1 Tenant Production | P2       | Tenant App        | People              | Players                                   | Birth date handling                      | Backend čuva birthDate; FE auto-fill nije potvrđen u primary form toku                               | Standardizovati auto-fill u primarnom PlayerForm-u ili skinuti očekivanje           | Dev         | Open     | UX cleanup                                                   |
+| CLN-R1-P2-003 | INV-0055     | R1 Tenant Production | P2       | Tenant App        | People              | Staff                                     | Staff detail profile                     | Team assignment u Staff detail je placeholder                                                        | Ukloniti placeholder ili linkovati na Team detail flow                              | Dev/Product | Open     | UX cleanup                                                   |
+| CLN-R1-P2-004 | INV-0077     | R1 Tenant Production | P2       | Tenant App        | Finance             | Fees / Članarine                          | Fee invoice create/update/delete         | Bulk create postoji; direct single create/edit/delete nije UI-active                                 | Odlučiti da li direct CRUD ostaje backend-only                                      | Product     | Open     | Ne blokira bulk fees ako je R1 flow bulk                     |
+| CLN-R1-P2-005 | INV-0084     | R1 Tenant Production | P2       | Tenant App        | Finance             | Fees / Članarine                          | Fee exports                              | CSV endpoints postoje; UI control nije pronađen                                                      | Dodati UI ili označiti backend-only                                                 | Product/Dev | Open     | Može biti kasnije                                            |
+| CLN-R1-P2-006 | INV-0091     | R1 Tenant Production | P2       | Tenant App        | Finance             | General Finance                           | Transaction export                       | CSV endpoint postoji; UI nije pronađen                                                               | Dodati UI ili označiti backend-only                                                 | Product/Dev | Open     | Može biti kasnije                                            |
+| CLN-R1-P2-007 | INV-0096     | R1 Tenant Production | P2       | Tenant App        | Documents           | Documents Engine                          | Document detail                          | Endpoint postoji, no detail UI                                                                       | Odlučiti da li detail UI treba za R1                                                | Product     | Open     | Player tab možda dovoljan                                    |
+| CLN-R1-P2-008 | INV-0109     | R1 Tenant Production | P2       | Tenant App        | Documents           | Documents Engine                          | Staff documents usage                    | API/schema support, no UI                                                                            | Odložiti Staff documents UI ili dodati tab                                          | Product/Dev | Open     | Nije nužno R1                                                |
+| CLN-R15-001   | INV-0052     | R1.5 Player Portal   | Deferred | Tenant App        | People              | Players                                   | Portal activation from Tenant FE         | Backend audit našao cross-club rizik u PlayerPortalAdminService                                      | Dodati eksplicitni club scoping prije Player Portal rollout-a                       | Dev         | Deferred | Nije R1, ali je security cleanup prije R1.5                  |
+| CLN-R15-002   | INV-0118     | R1.5 Player Portal   | Deferred | Player Portal App | Player Portal       | Login / player guard                      | Player-only route guard                  | Duplicate/inconsistent guard logic                                                                   | Konsolidovati guard logiku                                                          | Dev         | Deferred | R1.5                                                         |
+| CLN-R15-003   | INV-0128     | R1.5 Player Portal   | Deferred | Player Portal App | Player Portal       | Profile photo                             | Profile photo display                    | Koristi `usePersonPhoto`, ali ne `PersonThumb`                                                       | Prebaciti na standardni avatar wrapper                                              | Dev         | Deferred | R1.5                                                         |
+| CLN-R15-004   | INV-0129     | R1.5 Player Portal   | Deferred | Player Portal App | Player Portal       | Notifications                             | Notifications page/mock/API              | Mock-only UI                                                                                         | Sakriti ili povezati sa realnim API-em kasnije                                      | Product/Dev | Deferred | R1.5/Later                                                   |
+| CLN-R15-005   | INV-0130     | R1.5 Player Portal   | Deferred | Player Portal App | Player Portal       | Password reset                            | Password reset route/link                | Backend postoji; FE route missing                                                                    | Dodati FE route prije rollout-a                                                     | Dev         | Deferred | R1.5                                                         |
+| CLN-R2-001    | INV-0134     | R2 Admin Platform    | Deferred | Admin App         | Platform Management | Dashboard                                 | Admin dashboard                          | Active route/nav, no real page/API                                                                   | Sakriti ili implementirati kasnije                                                  | Product/Dev | Deferred | R2                                                           |
+| CLN-R2-002    | INV-0139     | R2 Admin Platform    | Deferred | Admin App         | Platform Management | Club users                                | Club users list/bootstrap/set password   | Missing lifecycle endpoints/caps; stub detail                                                        | Dovršiti Admin club users lifecycle                                                 | Dev         | Deferred | R2                                                           |
+| CLN-R2-003    | INV-0140     | R2 Admin Platform    | Deferred | Admin App         | Platform Management | Feature toggles                           | Club feature toggles                     | Missing explicit cap/allowlist                                                                       | Dodati cap i allowlist                                                              | Dev         | Deferred | R2                                                           |
+| CLN-R3-001    | INV-0148     | R3 Platform Billing  | Deferred | Platform Billing  | Billing             | Plans                                     | Plan pricing/billing cycle               | Yearly behavior not clearly enforced                                                                 | Uskladiti billing cycle semantics                                                   | Product/Dev | Deferred | R3                                                           |
+| CLN-R3-002    | INV-0150     | R3 Platform Billing  | Deferred | Platform Billing  | Billing             | Subscriptions                             | Subscription create/change/cancel        | Scheduled change not implemented                                                                     | Implementirati ili dokumentovati ograničenje                                        | Product/Dev | Deferred | R3                                                           |
+| CLN-R3-003    | INV-0155     | R3 Platform Billing  | Deferred | Platform Billing  | Billing             | Admin invoices                            | Invoice status calculation               | Stored/computed status drift risk                                                                    | Standardizovati status                                                              | Dev/Product | Deferred | R3                                                           |
+| CLN-R3-004    | INV-0157     | R3 Platform Billing  | Deferred | Platform Billing  | Billing             | Invoice payments                          | Payment storno/reversal                  | No platform storno evidence                                                                          | Definisati billing storno model                                                     | Product/Dev | Deferred | R3                                                           |
+| CLN-R3-005    | INV-0158     | R3 Platform Billing  | Deferred | Platform Billing  | Billing             | Standalone payments                       | Standalone payments page/API             | `/payments` placeholder; payments are invoice-bound                                                  | Sakriti ili implementirati kasnije                                                  | Product/Dev | Deferred | R3                                                           |
 
 ---
 
-## Blocked
+## Needs Verification
 
-| Module | Feature | Reason | Next action |
-| ------ | ------- | ------ | ----------- |
-| -      | -       | -      | -           |
+Ova tabela sadrži inventory redove koji postoje i imaju osnovni surface, ali još nisu dobili konkretan test assignment.
+
+| Inventory ID | Release              | Area              | Domain            | Module             | Feature                          | What to verify                                                                  | Notes                                |
+| ------------ | -------------------- | ----------------- | ----------------- | ------------------ | -------------------------------- | ------------------------------------------------------------------------------- | ------------------------------------ |
+| INV-0003     | R1 Tenant Production | Platform / System | System            | Auth / Account     | Login                            | Tenant login with valid club user; wrong role blocked; refresh/session behavior | R1 smoke kandidat                    |
+| INV-0007     | R1 Tenant Production | Platform / System | System            | Auth / Account     | Account change password          | Change password from tenant settings page                                       | R1 basic                             |
+| INV-0008     | R1 Tenant Production | Platform / System | System            | Auth / Account     | Tenant FE auth guard             | Club role allowed; admin/player blocked                                         | R1 smoke kandidat                    |
+| INV-0023     | R1 Tenant Production | Tenant App        | Club / Operations | Dashboard          | Dashboard cards/counts/summaries | Dashboard loads and cards show plausible data                                   | R1 smoke/basic                       |
+| INV-0024     | R1 Tenant Production | Tenant App        | Club / Operations | Dashboard          | Dashboard event/team/fee usage   | Dashboard navigation and cross-links                                            | R1 smoke/basic                       |
+| INV-0026     | R1 Tenant Production | Tenant App        | Club / Operations | Branding           | Club branding                    | Logo/name display in shell                                                      | R1 smoke/basic                       |
+| INV-0027     | R1 Tenant Production | Tenant App        | Club / Operations | Club logo          | Club logo display                | Logo blob loads; fallback initials if missing                                   | R1 smoke/basic                       |
+| INV-0030     | R1 Tenant Production | Tenant App        | Club / Operations | Users              | Tenant user create/invite        | Create tenant user if R1 scope confirms it                                      | Wait for permission cleanup decision |
+| INV-0033     | R1 Tenant Production | Tenant App        | Club / Operations | Users              | Tenant user set password         | Set password and login as test user                                             | R1 basic                             |
+| INV-0038     | R1 Tenant Production | Tenant App        | Club / Operations | Settings           | Account change password          | Confirm own password change                                                     | R1 basic                             |
+| INV-0040     | R1 Tenant Production | Tenant App        | People            | Players            | Player CRUD                      | Create, list, detail, edit, refresh, delete/dependency behavior                 | R1 core                              |
+| INV-0043     | R1 Tenant Production | Tenant App        | People            | Players            | Player detail profile            | Detail page and tabs load correctly                                             | R1 core                              |
+| INV-0045     | R1 Tenant Production | Tenant App        | People            | Players            | Player registrations             | Add/list/update/delete registration; duplicate active conflict                  | R1 core                              |
+| INV-0046     | R1 Tenant Production | Tenant App        | People            | Players            | Player medical records           | Add/list/update/delete medical; expiry impact                                   | R1 core                              |
+| INV-0047     | R1 Tenant Production | Tenant App        | People            | Players            | Player documents tab             | Player documents lifecycle after document cleanup                               | Wait for P0 document cleanup         |
+| INV-0049     | R1 Tenant Production | Tenant App        | People            | Players            | Contract verification            | Verify contract and verified-lock behavior                                      | R1 core                              |
+| INV-0050     | R1 Tenant Production | Tenant App        | People            | Players            | Eligibility Lite                 | Valid/invalid eligibility scenarios                                             | R1 core                              |
+| INV-0059     | R1 Tenant Production | Tenant App        | Teams             | Teams              | Team detail                      | Open team detail; members/staff/attendance panels load                          | R1 core                              |
+| INV-0060     | R1 Tenant Production | Tenant App        | Teams             | Memberships        | Player memberships               | Add/update/end player membership; conflicts                                     | R1 core                              |
+| INV-0062     | R1 Tenant Production | Tenant App        | Teams             | Attendance         | Team attendance panel/statistics | Stats after locked attendance                                                   | R1 core                              |
+| INV-0064     | R1 Tenant Production | Tenant App        | Events            | Event Core         | Event CRUD                       | Create/list/detail/edit/delete basic event                                      | R1 core                              |
+| INV-0065     | R1 Tenant Production | Tenant App        | Events            | Event Core         | Event detail                     | Detail route and tabs                                                           | R1 core                              |
+| INV-0067     | R1 Tenant Production | Tenant App        | Events            | Attendance         | Event attendance                 | Roster, save, refresh                                                           | R1 core                              |
+| INV-0069     | R1 Tenant Production | Tenant App        | Events            | Attendance         | Locked attendance read-only      | Lock then confirm read-only behavior                                            | R1 core                              |
+| INV-0070     | R1 Tenant Production | Tenant App        | Events            | Attendance         | Team attendance statistics       | Locked-only stats                                                               | R1 core                              |
+| INV-0071     | R1 Tenant Production | Tenant App        | Events            | Lineup / MatchList | MatchList / lineup               | Create/save/print lineup                                                        | R1 core                              |
+| INV-0075     | R1 Tenant Production | Tenant App        | Finance           | Fees / Članarine   | Fee invoices                     | List/detail invoice flow                                                        | R1 finance                           |
+| INV-0076     | R1 Tenant Production | Tenant App        | Finance           | Fees / Članarine   | Fee invoice list/detail          | Open list/detail and refresh                                                    | R1 finance                           |
+| INV-0079     | R1 Tenant Production | Tenant App        | Finance           | Fees / Članarine   | Fee payments                     | Add payment and verify balance                                                  | R1 finance                           |
+| INV-0081     | R1 Tenant Production | Tenant App        | Finance           | Fees / Članarine   | Payment storno / reversal        | Storno payment and verify balance/audit trail                                   | R1 finance                           |
+| INV-0082     | R1 Tenant Production | Tenant App        | Finance           | Fees / Članarine   | Bulk fee invoice creation        | Preview and apply bulk invoices                                                 | R1 finance                           |
+| INV-0083     | R1 Tenant Production | Tenant App        | Finance           | Fees / Članarine   | Bulk payment operations          | Bulk pay selected invoices                                                      | R1 finance                           |
+| INV-0086     | R1 Tenant Production | Tenant App        | Finance           | Fees / Članarine   | Fee dashboard/summary usage      | Dashboard and FeesPage summary consistency                                      | R1 finance                           |
+| INV-0088     | R1 Tenant Production | Tenant App        | Finance           | General Finance    | Finance transactions             | Ledger list/create/safe edit                                                    | R1 finance basic                     |
+| INV-0089     | R1 Tenant Production | Tenant App        | Finance           | General Finance    | Transaction create/update/delete | Create/safe update and verify delete disabled                                   | R1 finance basic                     |
+| INV-0093     | R1 Tenant Production | Tenant App        | Finance           | General Finance    | Category usage in transactions   | Category picker/filter in transaction flow                                      | R1 finance basic                     |
+| INV-0095     | R1 Tenant Production | Tenant App        | Documents         | Documents Engine   | Documents list/search/filter     | Player documents list/search/filter                                             | Wait for P0 document cleanup         |
+| INV-0098     | R1 Tenant Production | Tenant App        | Documents         | Documents Engine   | Document download/view           | Download/preview uploaded document                                              | Wait for P0 document cleanup         |
+| INV-0099     | R1 Tenant Production | Tenant App        | Documents         | Documents Engine   | Document replace                 | Replace and verify old/new lifecycle                                            | Wait for P0 document cleanup         |
+| INV-0101     | R1 Tenant Production | Tenant App        | Documents         | Documents Engine   | Document restore                 | Restore deleted document                                                        | Wait for P0 document cleanup         |
+| INV-0105     | R1 Tenant Production | Tenant App        | Documents         | Documents Engine   | Document title handling          | Title on upload/replace                                                         | Wait for P0 document cleanup         |
+| INV-0106     | R1 Tenant Production | Tenant App        | Documents         | Documents Engine   | File validation                  | Invalid extension/MIME/size                                                     | Wait for P0 document cleanup         |
+| INV-0108     | R1 Tenant Production | Tenant App        | Documents         | Documents Engine   | Player documents usage           | Player Documents tab full lifecycle                                             | Wait for P0 document cleanup         |
+| INV-0112     | R1 Tenant Production | Tenant App        | Documents         | Documents Engine   | Document tenant/club scoping     | Cross-club access should be blocked                                             | Wait for P0 document cleanup         |
 
 ---
 
-## Later
+## Ready for Testing
 
-| Module                 | Feature                          | Notes                                                                   |
-| ---------------------- | -------------------------------- | ----------------------------------------------------------------------- |
-| Notifications          | Player/member notifications      | Capability/UI postoji, ali modul nije prioritet sada                    |
-| QR Attendance          | QR-based attendance              | Payload standard definisan: `cm1:player:{clubId}:{playerId}[:checksum]` |
-| Registration Assistant | Registration workflow/checklists | Premium modul                                                           |
-| Eligibility PRO        | Advanced eligibility/compliance  | Premium modul                                                           |
-| Reports                | Advanced reports                 | Planirano nakon stabilizacije osnovnih modula                           |
-| Website                | Public website polish            | Nastaviti nakon operativnih prioriteta                                  |
+Ova tabela je registar konkretnih test assignmenta.
+
+Pravila:
+
+* Ovdje ne ide “paket” tipa `Tenant Basic Flow`.
+* Svaki red je konkretan test.
+* Svaki red mora imati `Inventory ID`.
+* Svaki red mora imati `Assignment ID`.
+* `Evidence` je putanja do test-order/result fajla.
+* Tester dobija konkretan test-order, ne cijeli `module-status.md`.
+
+Trenutno nema aktivnih test assignmenta dok se ne potvrdi R1 P0 cleanup odluka.
+
+| Test ID | Assignment ID | Inventory ID | Release              | Area              | Domain            | Module         | Feature                                  | Scenario                                                                         | Expected result                                                                | Tester | Environment | Status | Result | Evidence                                             | Notes                                                              |
+| ------- | ------------- | ------------ | -------------------- | ----------------- | ----------------- | -------------- | ---------------------------------------- | -------------------------------------------------------------------------------- | ------------------------------------------------------------------------------ | ------ | ----------- | ------ | ------ | ---------------------------------------------------- | ------------------------------------------------------------------ |
+| -       | -             | -            | -                    | -                 | -                 | -              | -                                        | -                                                                                | -                                                                              | -      | -           | -      | -      | -                                                    | -                                                                  |
+| Test ID | Assignment ID | Inventory ID | Release              | Area              | Domain            | Module         | Feature                                  | Scenario                                                                         | Expected result                                                                | Tester | Environment | Status | Result | Evidence                                             | Notes                                                              |
+| ---     | ---           | ---          | ---                  | ---               | ---               | ---            | ---                                      | ---                                                                              | ---                                                                            | ---    | ---         | ---    | ---    | ---                                                  | ---                                                                |
+| TSM-001 | TA-2026-0001  | INV-0003     | R1 Tenant Production | Platform / System | System            | Auth / Account | Login                                    | Open Tenant FE login page and log in with a valid club user.                     | User enters Tenant App without error.                                          | Kemo   | DEV         | Closed | Passed | `docs/testing/orders/test-order-001-tenant-smoke.md` | Passed in smoke test; not enough for full Verified.                |
+| TSM-002 | TA-2026-0001  | INV-0008     | R1 Tenant Production | Platform / System | System            | Auth / Account | Tenant FE auth guard                     | Try to access Tenant FE with a non-club user if credentials are available.       | Admin/player user is blocked or redirected; club user is allowed.              | Kemo   | DEV         | Closed | Passed | `docs/testing/orders/test-order-001-tenant-smoke.md` | If non-club credentials are not available, mark Blocked with note. |
+| TSM-003 | TA-2026-0001  | INV-0036     | R1 Tenant Production | Tenant App        | Club / Operations | Shell          | Tenant shell/sidebar/topbar club context | After login, check sidebar, topbar, club name/logo area and main layout.         | Shell loads without fatal error; club context is visible or fallback is shown. | Kemo   | DEV         | Closed | Passed | `docs/testing/orders/test-order-001-tenant-smoke.md` | Smoke test; placeholder buttons are not tested.                    |
+| TSM-004 | TA-2026-0001  | INV-0023     | R1 Tenant Production | Tenant App        | Club / Operations | Dashboard      | Dashboard cards/counts/summaries         | Open Dashboard page after login.                                                 | Dashboard loads without fatal error and cards/summaries are visible.           | Kemo   | DEV         | Closed | Passed | `docs/testing/orders/test-order-001-tenant-smoke.md` | Smoke test; numbers are not deeply verified.                       |
+| TSM-005 | TA-2026-0001  | INV-0024     | R1 Tenant Production | Tenant App        | Club / Operations | Dashboard      | Dashboard event/team/fee usage           | Click visible Dashboard navigation links/cards for teams/events/fees if present. | Correct target pages open without fatal error.                                 | Kemo   | DEV         | Closed | Passed | `docs/testing/orders/test-order-001-tenant-smoke.md` | Only navigation smoke, not full module test.                       |
+| TSM-006 | TA-2026-0001  | INV-0026     | R1 Tenant Production | Tenant App        | Club / Operations | Branding       | Club branding                            | Check that club branding/name appears in Tenant App shell.                       | Club branding is shown, or a safe fallback is shown.                           | Kemo   | DEV         | Closed | Passed | `docs/testing/orders/test-order-001-tenant-smoke.md` | No tenant logo upload/delete test.                                 |
+| TSM-007 | TA-2026-0001  | INV-0027     | R1 Tenant Production | Tenant App        | Club / Operations | Club logo      | Club logo display                        | Check club logo display in sidebar/topbar if configured.                         | Logo loads, or fallback initials/name are shown without broken UI.             | Kemo   | DEV         | Closed | Passed | `docs/testing/orders/test-order-001-tenant-smoke.md` | Display only.                                                      |
+| TSM-008 | TA-2026-0001  | INV-0003     | R1 Tenant Production | Platform / System | System            | Auth / Account | Login/session refresh                    | Refresh browser while on Dashboard.                                              | User remains authenticated or is redirected cleanly without app crash.         | Kemo   | DEV         | Closed | Passed | `docs/testing/orders/test-order-001-tenant-smoke.md` | Smoke session check.                                               |
+
+---
+
+## Testing Results
+
+| Date       | Assignment ID | Inventory ID                                                         | Tester | Environment | Result | Summary                                                                                                                                                                   | Follow-up                        | Inventory update                     |
+| ---------- | ------------- | -------------------------------------------------------------------- | ------ | ----------- | ------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------- | ------------------------------------ |
+| -          | -             | -                                                                    | -      | -           | -      | -                                                                                                                                                                         | -                                | -                                    |
+| 2026-06-07 | TA-2026-0001  | INV-0003, INV-0008, INV-0036, INV-0023, INV-0024, INV-0026, INV-0027 | Kemo   | DEV         | Passed | Tenant smoke test passed: 8 passed, 0 failed, 0 blocked. Login, tenant guard, shell, dashboard, dashboard navigation, branding, logo display and refresh behavior passed. | No cleanup from this assignment. | No Verified update; smoke test only. |
+
+---
+
+## Deferred / Later
+
+| Inventory ID | Release             | Area                        | Domain              | Module                       | Feature                                   | Reason                                                 | Notes                                                  |
+| ------------ | ------------------- | --------------------------- | ------------------- | ---------------------------- | ----------------------------------------- | ------------------------------------------------------ | ------------------------------------------------------ |
+| INV-0009     | R2 Admin Platform   | Platform / System           | System              | Auth / Account               | Admin FE auth guard                       | Admin Platform polish belongs to R2                    | Role `admin` gate                                      |
+| INV-0010     | R1.5 Player Portal  | Platform / System           | System              | Auth / Account               | Player FE auth guard                      | Player Portal belongs to R1.5 rollout and cleanup      | Duplicate/inconsistent guards                          |
+| INV-0012     | R2 Admin Platform   | Platform / System           | System              | Settings / Config            | Admin/global settings API                 | Admin Platform polish belongs to R2                    | Admin route placeholder                                |
+| INV-0015     | R2 Admin Platform   | Platform / System           | System              | Seasons                      | Seasons API                               | Admin Platform polish belongs to R2                    | Tenant default usage; admin placeholder                |
+| INV-0017     | Later               | Platform / System           | System              | Meta / Health                | Health endpoint                           | Later scope                                            | `/healthz` anonymous                                   |
+| INV-0018     | Later               | Platform / System           | System              | Meta / Health                | Readiness endpoint                        | Later scope                                            | `/readyz` anonymous                                    |
+| INV-0019     | Later               | Platform / System           | System              | Meta / Health                | Meta/version endpoint                     | Later scope                                            | admin constants yes; version no                        |
+| INV-0020     | Later               | Platform / System           | System              | Dev diagnostics              | Dev/debug endpoints                       | Later scope                                            | Some env-gated, some not                               |
+| INV-0028     | Deferred            | Tenant App                  | Club / Operations   | Club logo                    | Club logo upload/delete tenant-side       | Not R1 unless product decides tenant self-service logo | Admin-side only                                        |
+| INV-0051     | Later               | Tenant App                  | People              | Players                      | Eligibility PRO                           | Premium/later                                          | Nema vidljive premium compliance logike                |
+| INV-0072     | Later               | Tenant App                  | Events              | Lineup / MatchList           | Lineup lock/unlock                        | Later/manual workflow after R1 basics                  | Lock/unlock implemented; manual workflow pending       |
+| INV-0073     | R1.5 Player Portal  | Tenant App                  | Events              | Cross-surface                | Player Portal event usage                 | Player Portal belongs to R1.5                          | Player API postoji                                     |
+| INV-0085     | R1.5 Player Portal  | Tenant App                  | Finance             | Fees / Članarine             | Player fee summary / player finance usage | Player Portal belongs to R1.5                          | Player portal finance documented verified separately   |
+| INV-0092     | Deferred            | Tenant App                  | Finance             | General Finance              | Finance summaries/reports                 | Not R1 unless product decides                          | No general finance summary endpoint                    |
+| INV-0094     | Deferred            | Tenant App                  | Finance             | General Finance              | Tenant finance dashboard usage            | General ledger dashboard not R1                        | Dashboard shows fees, not general ledger               |
+| INV-0114     | Later               | Tenant App                  | Documents           | Documents Engine             | Documents dashboard/report usage          | Later                                                  | No surface found                                       |
+| INV-0115     | Later               | Tenant App                  | Reports             | Reports                      | Reports module                            | Later                                                  | `ViewReports` cap postoji, usage nije jasan            |
+| INV-0118     | R1.5 Player Portal  | Player Portal App           | Player Portal       | Login / player guard         | Player-only route guard                   | Player Portal belongs to R1.5                          | Duplicate/inconsistent guard logic                     |
+| INV-0119     | R1.5 Player Portal  | Player Portal App           | Player Portal       | Login / player guard         | Token storage/auth boot                   | Player Portal belongs to R1.5                          | Works through JWT + `/player/me` boot                  |
+| INV-0122     | R1.5 Player Portal  | Player Portal App           | Player Portal       | Profile                      | Player profile endpoint usage             | Player Portal belongs to R1.5                          | FE uses `/player/me`                                   |
+| INV-0124     | R1.5 Player Portal  | Player Portal App           | Player Portal       | Events                       | Event detail                              | Player Portal belongs to R1.5                          | Detail route/source exists                             |
+| INV-0127     | R1.5 Player Portal  | Player Portal App           | Player Portal       | Club logo                    | Club logo display                         | Player Portal belongs to R1.5                          | Manual logo-specific test not explicit                 |
+| INV-0128     | R1.5 Player Portal  | Player Portal App           | Player Portal       | Profile photo                | Profile photo display                     | Player Portal belongs to R1.5                          | Needs standard avatar cleanup                          |
+| INV-0129     | R1.5 Player Portal  | Player Portal App           | Player Portal       | Notifications                | Notifications page/mock/API               | Player Portal belongs to R1.5/later                    | Mock-only UI                                           |
+| INV-0130     | R1.5 Player Portal  | Player Portal App           | Player Portal       | Password reset               | Password reset route/link                 | Player Portal belongs to R1.5                          | Backend exists; FE route missing                       |
+| INV-0131     | R1.5 Player Portal  | Player Portal App           | Player Portal       | Role guards / access control | Role guard consistency                    | Player Portal belongs to R1.5                          | Consolidate guard behavior                             |
+| INV-0132     | R1.5 Player Portal  | Player Portal App           | Player Portal       | Cleanup / legacy files       | Legacy/duplicate player-fe files          | Player Portal belongs to R1.5                          | Unused old files remain                                |
+| INV-0133     | R2 Admin Platform   | Admin App                   | Platform Management | Access                       | Admin login / role gate                   | R2 Admin Platform                                      | Login and admin route gate exist                       |
+| INV-0134     | R2 Admin Platform   | Admin App                   | Platform Management | Dashboard                    | Admin dashboard                           | R2 Admin Platform                                      | Placeholder                                            |
+| INV-0135     | R2 Admin Platform   | Admin App                   | Platform Management | Clubs                        | Club list/search/filter                   | R2 Admin Platform                                      | Query mismatch risk                                    |
+| INV-0136     | R2 Admin Platform   | Admin App                   | Platform Management | Clubs                        | Club create/update/deactivate             | R2 Admin Platform                                      | No hard delete evidence                                |
+| INV-0137     | R2 Admin Platform   | Admin App                   | Platform Management | Club details                 | Club details                              | R2 Admin Platform                                      | Billing tabs placeholder                               |
+| INV-0138     | R2 Admin Platform   | Admin App                   | Platform Management | Club logo                    | Club logo display/upload/delete           | R2 Admin Platform                                      | No magic-byte validation found                         |
+| INV-0139     | R2 Admin Platform   | Admin App                   | Platform Management | Club users                   | Club users list/bootstrap/set password    | R2 Admin Platform                                      | Missing lifecycle endpoints/caps                       |
+| INV-0140     | R2 Admin Platform   | Admin App                   | Platform Management | Feature toggles              | Club feature toggles                      | R2 Admin Platform                                      | Missing explicit cap/allowlist                         |
+| INV-0141     | R2 Admin Platform   | Admin App                   | Platform Management | Admin users                  | Admin users page/API                      | R2 Admin Platform                                      | Partial API; placeholder FE                            |
+| INV-0142     | R2 Admin Platform   | Admin App                   | Platform Management | Roles                        | Roles page/API                            | R2 Admin Platform                                      | Read-only API only                                     |
+| INV-0143     | R2 Admin Platform   | Admin App                   | Platform Management | Audit                        | Audit logs page/API                       | R2 Admin Platform                                      | API exists, FE placeholder                             |
+| INV-0144     | R2 Admin Platform   | Admin App                   | Platform Management | Settings                     | Admin settings page/API                   | R2 Admin Platform                                      | API exists, FE placeholder                             |
+| INV-0145     | R2 Admin Platform   | Admin App                   | Platform Management | Seasons                      | Admin seasons page/API                    | R2 Admin Platform                                      | Backend CRUD exists, FE placeholder                    |
+| INV-0146     | R3 Platform Billing | Platform Billing            | Billing             | Plans                        | Plan list                                 | R3 Platform Billing                                    | Active list API/page                                   |
+| INV-0147     | R3 Platform Billing | Platform Billing            | Billing             | Plans                        | Plan create/update/activate/deactivate    | R3 Platform Billing                                    | No hard delete                                         |
+| INV-0148     | R3 Platform Billing | Platform Billing            | Billing             | Plans                        | Plan pricing/billing cycle                | R3 Platform Billing                                    | Yearly behavior unclear                                |
+| INV-0149     | R3 Platform Billing | Platform Billing            | Billing             | Subscriptions                | Subscription list                         | R3 Platform Billing                                    | Active API/page                                        |
+| INV-0150     | R3 Platform Billing | Platform Billing            | Billing             | Subscriptions                | Subscription create/change/cancel         | R3 Platform Billing                                    | Scheduled change not implemented                       |
+| INV-0151     | R3 Platform Billing | Platform Billing            | Billing             | Subscriptions                | Subscription status behavior              | R3 Platform Billing                                    | past_due unclear                                       |
+| INV-0152     | R3 Platform Billing | Platform Billing            | Billing             | Admin invoices               | Invoice list/detail                       | R3 Platform Billing                                    | API detail exists; FE list only                        |
+| INV-0153     | R3 Platform Billing | Platform Billing            | Billing             | Admin invoices               | Invoice create/void/mark-paid             | R3 Platform Billing                                    | Zero amount allowed                                    |
+| INV-0154     | R3 Platform Billing | Platform Billing            | Billing             | Admin invoices               | Invoice finalize                          | R3 Platform Billing                                    | Backend endpoint exists                                |
+| INV-0155     | R3 Platform Billing | Platform Billing            | Billing             | Admin invoices               | Invoice status calculation                | R3 Platform Billing                                    | Stored/computed status drift                           |
+| INV-0156     | R3 Platform Billing | Platform Billing            | Billing             | Invoice payments             | Payment add/edit/delete                   | R3 Platform Billing                                    | Nested payments modal active                           |
+| INV-0157     | R3 Platform Billing | Platform Billing            | Billing             | Invoice payments             | Payment storno/reversal                   | R3 Platform Billing                                    | No platform storno evidence                            |
+| INV-0158     | R3 Platform Billing | Platform Billing            | Billing             | Standalone payments          | Standalone payments page/API              | R3 Platform Billing                                    | Placeholder                                            |
+| INV-0159     | R3 Platform Billing | Platform Billing            | Billing             | Ops / finalize               | Ops/finalize workflow                     | R3 Platform Billing                                    | API/background runner exists                           |
+| INV-0160     | R3 Platform Billing | Platform Billing            | Billing             | Exports                      | Billing exports                           | R3 Platform Billing                                    | No export evidence                                     |
+| INV-0161     | R3 Platform Billing | Platform Billing            | Billing             | Dashboard                    | Billing dashboard/summary                 | R3 Platform Billing                                    | No dedicated dashboard                                 |
+| INV-0162     | R3 Platform Billing | Platform Billing            | Billing             | Security/Audit               | Billing permissions/audit                 | R3 Platform Billing                                    | FE caps/audit incomplete                               |
+| INV-0163     | Later               | Planned / UI-only / Cleanup | UI-only             | Notifications                | Notifications                             | Later                                                  | Topbar dugme postoji, nema akcije                      |
+| INV-0164     | Later               | Planned / UI-only / Cleanup | UI-only             | Help                         | Help / support UI                         | Later                                                  | Topbar dugme postoji, nema akcije                      |
+| INV-0165     | Later               | Planned / UI-only / Cleanup | UI-only             | Global Search                | Global search                             | Later                                                  | Topbar input postoji, nema potvrđenog search ponašanja |
 
 ---
 
 ## Current working focus
 
-Trenutni fokus:
+1. Sačuvati ovaj `module-status.md` kao komandni centar.
+2. Pregledati R1 `Needs Cleanup` i potvrditi šta je stvarno P0.
+3. Riješiti ili svjesno prihvatiti R1 P0 dokument/staff cleanup stavke.
+4. Tek nakon toga napraviti prvi konkretni test assignment.
+5. Prvi test assignment mora imati:
 
-1. Commitati ažurirani `clubmanager-inventory.md`
-2. Ažurirati `module-status.md` sa People backend/API audit nalazima
-3. Riješiti najkritičnije People cleanup stavke:
-
-   * Player Portal activation club scoping
-   * Staff permission mismatch
-   * Staff JMBG nullability mismatch
-   * Team staff controlled validation errors
-   * Contract FE raw debug alert
-4. Nakon cleanup-a pokrenuti People functional checklist
-5. Nakon svake provjere ažurirati:
-
-   * `clubmanager-inventory.md`
-   * `module-status.md`
-   * po potrebi `system-surface-map.md`
-   * po potrebi `docs/testing/test-plan.md`
+   * `Assignment ID`
+   * konkretne `Test ID` redove
+   * `Inventory ID`
+   * tester
+   * environment
+   * test-order/result fajl kao evidence
+6. Nakon vraćenog test rezultata ažurirati `Testing Results`.
+7. Inventory update raditi samo nakon `Passed` dokaza i pregleda otvorenog cleanup-a za isti `Inventory ID`.
 
 ---
 
 ## Update rule
 
-Nakon svake veće provjere ili dorade upisati kratak update:
+Za svaki update koristiti ovaj trag:
 
 ```text
-Date:
-Module:
-Feature:
-Status:
-Confirmed:
-Remaining:
+Inventory ID:
+Cleanup ID:
+Test ID:
+Assignment ID:
+Tester:
+Environment:
+Result:
+Evidence:
+Decision:
 Inventory update:
 ```
 
 Primjer:
 
 ```text
-Date: 2026-06-05
-Module: Photos
-Feature: Photo/avatar pipeline
-Status: Polished
-Confirmed:
-- Standardized PersonThumb usage
-- usePersonPhoto/mediaStore pipeline verified
-- Legacy photo cache removed
-- Upload/delete/list/detail tests passed
-Remaining:
-- Commented legacy blocks can be cleaned later if they make search noisy
-Inventory update:
-- Photos | Photo/avatar pipeline | Polished
+Inventory ID: INV-0040
+Test ID: TPB-014
+Assignment ID: TA-2026-0001
+Tester: Kemo
+Environment: DEV
+Result: Passed
+Evidence: docs/testing/orders/test-order-001-tenant-smoke-kemo.md
+Decision: Smoke passed, but not enough for full Verified
+Inventory update: No; keep Status = Implemented, Tested = Partial
 ```
 
-```text
-Date: 2026-06-06
-Module: Tenant App / People
-Feature: Backend/API + DB schema audit
-Status: Implemented with cleanup required
-Confirmed:
-- Backend source audited from /mnt/c/Users/kemo/source/repos/WEB/ClubManager/src
-- DB schema audited from /home/kemo/ClubManager/docs/database/shema.sql
-- Players, registrations, medicals, documents, contracts and eligibility have BE/DB evidence
-- Staff and Player Portal activation have backend risks requiring cleanup
-Remaining:
-- Player Portal activation explicit club scoping
-- Staff permission and nullability cleanup
-- Team staff assignment controlled validation errors
-- Manual functional People checklist
-Inventory update:
-- People inventory rows updated from FE-only evidence to FE + Backend/API + DB schema evidence
-```
+<!-- Generated base reviewed from product/clubmanager-inventory.md. Inventory rows read: 165. -->
