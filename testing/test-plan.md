@@ -1,140 +1,174 @@
 # ClubManager Test Plan
 
-Ovaj dokument definiše test strategiju za ClubManager nakon završenog FE surface, Backend/API i DB schema audita.
+Ovaj dokument definiše način testiranja ClubManager aplikacije u skladu sa operativnim tokom:
 
-Primarni cilj trenutno nije testiranje kompletne platforme, nego priprema prve produkcijske verzije za klubove.
+```text
+clubmanager-inventory.md
+    ↓
+module-status.md
+    ↓
+cleanup-backlog.md / testing
+    ↓
+module-status.md
+    ↓
+clubmanager-inventory.md
+```
 
 ---
 
-## Release focus
+## 1. Source rule
 
-Current production goal:
+Testiranje se ne pokreće iz chata, inventory-ja ili cleanup-backlog-a.
+
+Tester dobija nalog isključivo iz:
+
+```text
+docs/product/module-status.md
+```
+
+i to iz sekcije:
+
+```text
+Ready for Testing
+```
+
+Checklist-a se koristi samo ako je test paket u `module-status.md` označen kao:
+
+```text
+Ready
+```
+
+Ako je paket označen kao `Draft`, `Deferred`, `Blocked` ili `Later`, tester ga ne radi kao zvanični test nalog.
+
+---
+
+## 2. Uloge dokumenata
+
+| Dokument                    | Uloga                                                          |
+| --------------------------- | -------------------------------------------------------------- |
+| `clubmanager-inventory.md`  | Mapa proizvoda i status feature-a                              |
+| `module-status.md`          | Komandni centar; odlučuje šta ide na testiranje                |
+| `cleanup-backlog.md`        | Dev backlog; developer označava `Open`, `In Progress`, `Fixed` |
+| `test-plan.md`              | Opšta pravila testiranja                                       |
+| `checklists/*.md`           | Izvršenje konkretnog test paketa                               |
+| `tester-report-template.md` | Format za prijavu `Failed` i `Blocked` rezultata               |
+
+---
+
+## 3. Release focus
+
+Trenutni produkcijski cilj:
 
 ```text
 Release 1 — Tenant Production MVP
 ```
 
-Primary users:
+Značenje:
+
+```text
+Prva produkcijska verzija Tenant App aplikacije za sekretara i vlasnika/menadžera kluba.
+```
+
+Primarni korisnici:
 
 ```text
 club secretary
 club owner / manager
 ```
 
-Release 1 cilj:
+Release 1 fokus:
+
+| Area / Module            | R1 status         | Notes                                                                             |
+| ------------------------ | ----------------- | --------------------------------------------------------------------------------- |
+| Tenant App               | Included          | Glavni fokus                                                                      |
+| Dashboard                | Included          | Basic dashboard                                                                   |
+| Players                  | Included          | Core profile, photo, registrations, medicals, documents, contracts, eligibility   |
+| Staff                    | Included          | CRUD, photo, validation, team assignments                                         |
+| Teams                    | Included          | Team CRUD, player memberships, staff memberships                                  |
+| Events                   | Included          | Event CRUD, lifecycle, attendance, lineup / MatchList                             |
+| Documents Engine         | Included, limited | Player documents; Club documents nisu R1 dok se ne riješi schema/service mismatch |
+| Finance Fees / Članarine | Included          | Tenant članarine                                                                  |
+| General Finance          | Included, basic   | Categories, transactions, storno                                                  |
+| Tenant users             | Minimal           | Samo ono što treba za rad kluba                                                   |
+| Player Portal            | Deferred          | R1.5                                                                              |
+| Admin Platform           | Deferred          | R2                                                                                |
+| Platform Billing         | Deferred          | R3                                                                                |
+| Notifications            | Deferred          | Later                                                                             |
+| Advanced reports         | Deferred          | Later                                                                             |
+
+---
+
+## 4. Šta tester smije testirati
+
+Tester smije testirati samo pakete koji su u:
 
 ```text
-Stabilna Tenant App aplikacija za svakodnevno vođenje kluba.
+docs/product/module-status.md → Ready for Testing
 ```
 
-Release 1 obuhvata:
+i imaju:
 
-* Dashboard
-* Players
-* Staff
-* Teams
-* Events
-* Attendance
-* Lineup / MatchList
-* Documents
-* Registrations
-* Medicals
-* Contracts
-* Eligibility Lite
-* Tenant finance / članarine
-* Tenant users minimalno
-* Basic permissions behavior
+```text
+Status = Ready
+```
 
----
+Za svaki test paket moraju biti navedeni:
 
-## Deferred for later releases
-
-Ove oblasti nisu dio prvog produkcijskog test fokusa:
-
-| Release             | Scope                                                                      |
-| ------------------- | -------------------------------------------------------------------------- |
-| R1.5 Player Portal  | Player Portal rollout nakon stabilizacije Tenant App-a                     |
-| R2 Admin Platform   | Admin dashboard, roles, audit, settings, seasons, admin polish             |
-| R3 Platform Billing | Plans, subscriptions, platform invoices, platform payments, billing audit  |
-| Later               | Notifications, advanced reports, standalone payments, advanced admin tools |
-
-Player Portal CORE postoji i ima ranije manual evidence, ali nije prioritet za prvo produkcijsko puštanje. Prvo se stabilizuje Tenant App za sekretara i vlasnika kluba.
+| Field        | Meaning                                                        |
+| ------------ | -------------------------------------------------------------- |
+| Test Package | Naziv test paketa                                              |
+| Release      | Release kojem pripada                                          |
+| Area         | Dio aplikacije                                                 |
+| Scope        | Šta se testira                                                 |
+| Checklist    | Koji checklist fajl se koristi                                 |
+| Status       | Draft / Ready / Testing / Passed / Failed / Blocked / Deferred |
+| Notes        | Posebne napomene i izuzeci                                     |
 
 ---
 
-## Test approach
+## 5. Šta tester ne smije testirati kao zvanični nalog
 
-Testiranje se dijeli na dva paralelna toka:
+Tester ne smije samostalno proširivati scope testiranja mimo naloga iz `module-status.md`.
 
-| Tok                     | Radi    | Svrha                                                     |
-| ----------------------- | ------- | --------------------------------------------------------- |
-| Functional verification | Tester  | Provjerava stabilne korisničke tokove u Tenant App-u      |
-| Cleanup / fixes         | Dev tim | Rješava poznate P0/P1 probleme prije finalne verifikacije |
+Za Release 1 ne testirati kao final verification:
 
-Tester ne treba dokazivati bugove koje već znamo. Ako je problem već u cleanup backlogu, test ga označava kao `Blocked` ili se preskače dok se ne popravi.
-
----
-
-## Test status legenda
-
-| Status       | Značenje                                               |
-| ------------ | ------------------------------------------------------ |
-| Not tested   | Test još nije izvršen                                  |
-| Passed       | Test je prošao                                         |
-| Failed       | Test nije prošao                                       |
-| Blocked      | Test se ne može izvršiti zbog poznatog problema        |
-| Needs retest | Test je ranije pao ili je kod mijenjan; treba ponoviti |
-| Deferred     | Svjesno odloženo                                       |
+| Area                    | Reason                                         |
+| ----------------------- | ---------------------------------------------- |
+| Player Portal rollout   | R1.5                                           |
+| Admin Platform polish   | R2                                             |
+| Platform Billing        | R3                                             |
+| Notifications           | Planned/later                                  |
+| Password reset          | Poznati cleanup/gap                            |
+| Club documents          | Schema/service mismatch                        |
+| Admin placeholder pages | Nisu R1 fokus                                  |
+| Standalone payments     | Platform Billing / later                       |
+| Advanced reports        | Later                                          |
+| Dev diagnostics         | Ciljani security cleanup, ne opšti tester flow |
 
 ---
 
-## Pravilo za Verified status
+## 6. Test statusi
 
-Feature može preći u `Verified` samo ako:
-
-1. FE/API/DB surface postoji.
-2. Nema otvoren P0 blocker za taj feature.
-3. P1 blocker je riješen ili svjesno odložen.
-4. Tester ili dev ručno prođe stvarni korisnički tok.
-5. Rezultat je upisan u checklistu.
-
-Surface audit sam po sebi ne znači `Verified`.
-
----
-
-## Šta tester može testirati odmah
-
-| Test package            | Status              | Notes                                                                 |
-| ----------------------- | ------------------- | --------------------------------------------------------------------- |
-| Tenant MVP basic flow   | Ready with warnings | Glavni paket za Release 1                                             |
-| People basic flow       | Ready with warnings | Ne tretirati JMBG semantic edge-case kao blocker ako nije finalizovan |
-| Teams basic flow        | Ready with warnings | Osnovni flow može; edge-case validacije poslije cleanup-a             |
-| Events basic flow       | Ready with warnings | Osnovni flow može; lifecycle/complete edge-case poslije cleanup-a     |
-| Documents player flow   | Ready with warnings | Ne testirati Club documents kao R1 feature                            |
-| Finance fees basic flow | Ready with warnings | Testirati članarine, ne Platform Billing                              |
-| Dashboard basic flow    | Ready with warnings | Testirati osnovni prikaz i navigaciju                                 |
+| Status       | Značenje                                                               |
+| ------------ | ---------------------------------------------------------------------- |
+| Not tested   | Test još nije izvršen                                                  |
+| Passed       | Test je prošao                                                         |
+| Failed       | Test nije prošao                                                       |
+| Blocked      | Test se ne može izvršiti zbog greške, poznatog blockera ili zavisnosti |
+| Needs retest | Test treba ponoviti nakon fix-a                                        |
+| Deferred     | Svjesno odloženo                                                       |
 
 ---
 
-## Šta ne testirati kao final verification za Release 1
+## 7. Pravilo za Failed / Blocked
 
-| Area                                | Reason                            |
-| ----------------------------------- | --------------------------------- |
-| Player Portal rollout               | Odloženo za R1.5                  |
-| Admin Platform full verification    | Odloženo za R2                    |
-| Platform Billing                    | Odloženo za R3                    |
-| Notifications                       | Mock/planned                      |
-| Password reset                      | Poznat FE/backend mismatch        |
-| Club documents                      | Service/schema mismatch           |
-| Dev diagnostics                     | Security cleanup pending          |
-| Platform/System security edge cases | Rješavati ciljano nakon cleanup-a |
-| Admin placeholder pages             | Nisu R1 fokus                     |
+Za svaki `Failed` ili `Blocked` rezultat tester mora popuniti report po template-u:
 
----
+```text
+docs/testing/checklists/tester-report-template.md
+```
 
-## Tester reporting format
-
-Za svaki `Failed` ili `Blocked` test navesti:
+Minimalno mora navesti:
 
 ```text
 Test ID:
@@ -151,45 +185,119 @@ Notes:
 
 ---
 
-## Test environment
+## 8. Kretanje tester nalaza
 
-| Field         | Value |
-| ------------- | ----- |
-| Environment   | DEV   |
-| API           |       |
-| Tenant FE URL |       |
-| Browser       |       |
-| Tester        |       |
-| Test date     |       |
-| Club          |       |
-| Club user     |       |
-| Notes         |       |
+Ako tester nađe bug:
+
+```text
+Tester report
+    ↓
+module-status.md
+    ↓
+cleanup-backlog.md
+    ↓
+developer fix
+    ↓
+cleanup-backlog.md = Fixed
+    ↓
+module-status.md = Ready for Testing
+    ↓
+tester retest
+    ↓
+module-status.md = Passed / Failed / Blocked
+    ↓
+inventory update only if feature is verified
+```
+
+Tester ne ažurira inventory direktno.
+
+Developer ne izdaje nalog testeru.
 
 ---
 
-## Current priority
+## 9. Verified pravilo
 
-1. Tenant MVP basic checklist
-2. Retest nakon P0/P1 cleanup-a
-3. Finance Fees targeted verification
-4. Documents targeted verification
-5. Permission/security targeted verification
-6. Player Portal R1.5 checklist kasnije
+Feature može preći u `Verified` samo ako:
+
+1. Postoji u inventory-ju.
+2. Nema otvoren R1 P0 blocker za taj feature.
+3. P1 blocker je riješen ili svjesno prihvaćen.
+4. Test paket ili relevantni test case je prošao.
+5. Rezultat je evidentiran u `module-status.md`.
+6. Inventory se ažurira nakon dokaza.
+
+Važno:
+
+```text
+Fixed nije isto što i Verified.
+```
+
+| Termin   | Značenje                                                        |
+| -------- | --------------------------------------------------------------- |
+| Fixed    | Developer je završio popravku                                   |
+| Retested | Tester je ponovio test nakon fix-a                              |
+| Verified | Feature je funkcionalno potvrđen i inventory status je ažuriran |
+| Polished | Feature je potvrđen i dodatno UX/visualno dotjeran              |
 
 ---
 
-## Release 1 exit criteria
+## 10. Prvi planirani test paket
+
+Trenutni prvi planirani paket:
+
+```text
+Tenant Production Basic Flow
+```
+
+Checklist:
+
+```text
+docs/testing/checklists/tenant-production-basic-checklist.md
+```
+
+Ovaj paket se ne smatra aktivnim dok `module-status.md → Ready for Testing` ne kaže:
+
+```text
+Status = Ready
+```
+
+Dok je status `Draft`, checklist postoji samo kao priprema.
+
+---
+
+## 11. Test environment
+
+| Field           | Value       |
+| --------------- | ----------- |
+| Environment     | DEV / STAGE |
+| Tenant FE URL   |             |
+| API URL         |             |
+| Browser         |             |
+| Tester          |             |
+| Test date       |             |
+| Club            |             |
+| User / role     |             |
+| Build / version |             |
+| Notes           |             |
+
+---
+
+## 12. Release 1 exit criteria
 
 Release 1 može ići prema produkciji kada:
 
 * Tenant login radi stabilno.
 * Dashboard se učitava bez greške.
-* Players/Staff osnovni CRUD radi.
+* Players osnovni tok radi.
+* Staff osnovni tok radi.
 * Teams i memberships osnovno rade.
-* Events i attendance osnovno rade.
-* Documents za Player rade za osnovni upload/download/replace/delete flow.
-* Finance Fees osnovni tok radi: bulk invoice, quick pay, storno, refresh.
+* Events osnovno rade.
+* Attendance osnovno radi.
+* Lineup / MatchList osnovno radi.
+* Player documents osnovni lifecycle radi.
+* Registrations, medicals, contracts i Eligibility Lite imaju potvrđene osnovne tokove.
+* Finance Fees osnovni tok radi: invoice, payment, partial/full, storno, refresh.
 * Tenant users minimalni flow radi ili je jasno ograničen.
-* Nema otvorenih P0 cleanup stavki koje direktno ugrožavaju Tenant App.
-* Kritični P1 problemi su riješeni ili svjesno odloženi.
-* Inventory i module-status su ažurirani prema rezultatima testiranja.
+* Nema otvorenih R1 P0 stavki koje direktno ugrožavaju Tenant App.
+* Kritični P1 problemi su riješeni ili svjesno prihvaćeni.
+* `module-status.md` i `clubmanager-inventory.md` su ažurirani.

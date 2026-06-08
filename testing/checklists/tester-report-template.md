@@ -1,26 +1,36 @@
 # Tester Report Template
 
-Ovaj template se koristi za prijavu svakog `Failed` ili `Blocked` testa.
+Ovaj template se koristi za svaki `Failed`, `Blocked` ili sporni test rezultat.
+
+Tester rezultat se vraća u:
+
+```text
+docs/product/module-status.md
+```
+
+Developer ne dobija nalog direktno od testera. `module-status.md` odlučuje da li nalaz ide u cleanup-backlog.
 
 ---
 
-## Basic info
+## 1. Basic info
 
-| Field       | Value            |
-| ----------- | ---------------- |
-| Test ID     |                  |
-| Status      | Failed / Blocked |
-| Environment | DEV / STAGE      |
-| Tester      |                  |
-| Date        |                  |
-| Browser     |                  |
-| User / role |                  |
-| Club        |                  |
-| URL         |                  |
+| Field           | Value                           |
+| --------------- | ------------------------------- |
+| Test ID         |                                 |
+| Test package    |                                 |
+| Status          | Failed / Blocked / Needs retest |
+| Environment     | DEV / STAGE                     |
+| Tester          |                                 |
+| Date            |                                 |
+| Browser         |                                 |
+| User / role     |                                 |
+| Club            |                                 |
+| URL             |                                 |
+| Build / version |                                 |
 
 ---
 
-## Steps to reproduce
+## 2. Steps to reproduce
 
 ```text
 1.
@@ -31,29 +41,29 @@ Ovaj template se koristi za prijavu svakog `Failed` ili `Blocked` testa.
 
 ---
 
-## Expected result
+## 3. Expected result
 
 ```text
 ```
 
 ---
 
-## Actual result
+## 4. Actual result
 
 ```text
 ```
 
 ---
 
-## Screenshot / evidence
+## 5. Screenshot / evidence
 
 ```text
-Paste screenshot path, filename or note here.
+Paste screenshot path, filename, video link, log reference or note here.
 ```
 
 ---
 
-## Severity
+## 6. Severity
 
 | Severity | Meaning                                |
 | -------- | -------------------------------------- |
@@ -69,16 +79,17 @@ Selected severity:
 
 ---
 
-## Suggested classification
+## 7. Suggested classification
 
-| Classification   | Meaning                                                |
-| ---------------- | ------------------------------------------------------ |
-| Bug              | Funkcionalnost ne radi kako treba                      |
-| UX issue         | Funkcionalnost radi, ali korisnički tok nije dobar     |
-| Permission issue | Problem sa rolama/capability ponašanjem                |
-| Data issue       | Problem sa podacima, statusom, refreshom ili izračunom |
-| Known cleanup    | Već postoji u cleanup backlogu                         |
-| Product decision | Treba odluka, nije čisti bug                           |
+| Classification    | Meaning                                                |
+| ----------------- | ------------------------------------------------------ |
+| Bug               | Funkcionalnost ne radi kako treba                      |
+| UX issue          | Funkcionalnost radi, ali korisnički tok nije dobar     |
+| Permission issue  | Problem sa rolama/capability ponašanjem                |
+| Data issue        | Problem sa podacima, statusom, refreshom ili izračunom |
+| Known cleanup     | Već postoji u cleanup backlogu                         |
+| Product decision  | Treba odluka, nije čisti bug                           |
+| Environment issue | Problem je vezan za DEV/STAGE/setup                    |
 
 Selected classification:
 
@@ -87,18 +98,47 @@ Selected classification:
 
 ---
 
-## Notes
+## 8. Known cleanup reference
+
+Ako tester misli da je problem već poznat, navesti cleanup ID ili module-status stavku.
+
+| Field                 | Value                                                         |
+| --------------------- | ------------------------------------------------------------- |
+| Cleanup ID            |                                                               |
+| Module-status section | Needs Cleanup / Blocked / Ready for Testing / Testing Results |
+| Notes                 |                                                               |
+
+---
+
+## 9. Notes
 
 ```text
 ```
 
 ---
 
-## Retest
+## 10. Triage result
 
-| Field         | Value                     |
-| ------------- | ------------------------- |
-| Fix reference |                           |
-| Retest date   |                           |
-| Retest result | Passed / Failed / Blocked |
-| Retest notes  |                           |
+Ovaj dio popunjava osoba koja vodi module-status.
+
+| Field                    | Value                                |
+| ------------------------ | ------------------------------------ |
+| Accepted as bug?         | Yes / No                             |
+| Existing cleanup item?   | Yes / No                             |
+| New cleanup needed?      | Yes / No                             |
+| Product decision needed? | Yes / No                             |
+| module-status update     |                                      |
+| cleanup-backlog update   |                                      |
+| inventory update needed? | No / After retest / Product decision |
+
+---
+
+## 11. Retest
+
+| Field                 | Value                     |
+| --------------------- | ------------------------- |
+| Fix reference         |                           |
+| Ready for retest date |                           |
+| Retest date           |                           |
+| Retest result         | Passed / Failed / Blocked |
+| Retest notes          |                           |
